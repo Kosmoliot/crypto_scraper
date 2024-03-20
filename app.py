@@ -3,8 +3,18 @@ import pyodbc, struct
 from azure import identity
 
 from typing import Union
+
+# FastAPI web framework for building APIs with Python. Uses Swagger UI to generate 
+# interactive API documentation that lets your users try out the API calls directly 
+# in the browser
 from fastapi import FastAPI
+
+#FastAPI uses Pydantic models for request and response validation. It automatically 
+# validates request data against the defined data models and raises validation errors
+# if data doesn't match the expected schema
 from pydantic import BaseModel
+
+# Uses load_dotenv to load a connection string from .env file
 from dotenv import load_dotenv
 
 class Person(BaseModel):
