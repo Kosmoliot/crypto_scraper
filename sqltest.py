@@ -1,11 +1,11 @@
-import pyodbc
-server = 'scrappersqlserver.database.windows.net'
-database = 'scrapperdatabase'
-username = 'scrapper'
-password = 'e4syp4ssword5!'
-driver= '{ODBC Driver 18 for SQL Server}'
+import pyodbc, os
+from dotenv import load_dotenv
 
-with pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=tcp:scrappersqlserver.database.windows.net;PORT=1433;DATABASE=scrapperdatabase;UID=scrapper;PWD=e4syp4ssword5!') as conn:
+
+load_dotenv()
+connection_string = os.environ["AZURE_SQL_CONNECTIONSTRING"]
+
+with pyodbc.connect(connection_string) as conn:
     with conn.cursor() as cursor:
         cursor.execute("SELECT TOP 3 name, collation_name FROM sys.databases")
         row = cursor.fetchone()
