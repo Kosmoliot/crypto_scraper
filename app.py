@@ -19,7 +19,9 @@ from dotenv import load_dotenv
 
 class Person(BaseModel):
     first_name: str
-    last_name: Union[str, None] = None
+    # Using 'Union' type hint from Python's typing module to specify that 'last_name' can either be a string
+    #('str') or 'None'
+    last_name: Union[str, None] = None  
 
 load_dotenv()
 connection_string = os.environ["AZURE_SQL_CONNECTIONSTRING"]
