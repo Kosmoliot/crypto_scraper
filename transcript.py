@@ -1,6 +1,7 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 from googleapiclient.discovery import build
 
+
 def transcript(video_id):
     transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
     video_transc = []
@@ -11,6 +12,7 @@ def transcript(video_id):
 
 
 # # Define API key and channel ID
+
 # API_KEY = "AIzaSyDXIB6xTdYB996unF3cq8rwFb8wGh63WjE"
 # CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
