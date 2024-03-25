@@ -3,3 +3,6 @@ fastapi
 uvicorn[standard]
 pydantic
 azure-identity
+google-api-python-client
+python-dotenv
+youtube-transcript-api
