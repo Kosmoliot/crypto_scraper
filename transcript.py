@@ -16,7 +16,9 @@ def transcript(video_id):
 # Define API key and channel ID
 load_dotenv()
 API_KEY = os.environ['YOUTUBE_API_KEY']
+OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
+
 
 # Define the YouTube API service
 youtube = build("youtube", "v3", developerKey=API_KEY)
@@ -32,5 +34,7 @@ response = request.execute()
 # Extract video IDs from the response
 video_ids = [item["id"]["videoId"] for item in response["items"] if item["id"]["kind"] == "youtube#video"]
 
-print(transcript('qKL0EbFms0g'))
+# print(transcript('qKL0EbFms0g'))
+
+
 
