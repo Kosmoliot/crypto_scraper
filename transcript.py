@@ -2,6 +2,7 @@ import os
 from youtube_transcript_api import YouTubeTranscriptApi
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
+from openai import OpenAI
 
 
 def transcript(video_id):
@@ -16,7 +17,7 @@ def transcript(video_id):
 # Define API key and channel ID
 load_dotenv()
 API_KEY = os.environ['YOUTUBE_API_KEY']
-OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
+# OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
 
@@ -34,7 +35,16 @@ response = request.execute()
 # Extract video IDs from the response
 video_ids = [item["id"]["videoId"] for item in response["items"] if item["id"]["kind"] == "youtube#video"]
 
-# print(transcript('qKL0EbFms0g'))
+text = transcript('qKL0EbFms0g')
 
+client = OpenAI()
 
+completion = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  messages=[
+    {"role": "system", "content": "You are crypto trader, your goal is to identify crypto tokens, projects and protocols in the text."},
+    {"role": "user", "content": text}
+  ]
+)
 
+print(completion.choices[0].message)
