@@ -3,6 +3,15 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
 from openai import OpenAI
+from datetime import datetime, timedelta
+
+
+load_dotenv()
+
+# Define API key and channel ID
+API_KEY = os.environ['YOUTUBE_API_KEY']
+# OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
+CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
 
 def transcript(video_id):
@@ -13,22 +22,20 @@ def transcript(video_id):
     return ' '.join(video_transc)
     
 
-
-# Define API key and channel ID
-load_dotenv()
-API_KEY = os.environ['YOUTUBE_API_KEY']
-# OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
-
-
 # Define the YouTube API service
 youtube = build("youtube", "v3", developerKey=API_KEY)
+
+# Define the time period
+start_date = datetime(2024, 3, 20).strftime('%Y-%m-%dT%H:%M:%SZ')
+end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
 # Retrieve videos from the channel
 request = youtube.search().list(
     part="snippet",
     channelId=CHANNEL_ID,
-    maxResults=100  # Adjust the number of results as needed
+    publishedAfter = start_date,
+    publishedBefore = end_date,
+    maxResults=10  # Adjust the number of results as needed
 )
 response = request.execute()
 
@@ -37,16 +44,18 @@ video_ids = [item["id"]["videoId"] for item in response["items"] if item["id"]["
 
 text = transcript(video_ids[0])
 
-client = OpenAI()
 
-completion = client.chat.completions.create(
-  model="gpt-3.5-turbo",
-  messages=[
-    {"role": "system", "content": "You are crypto trader, your goal is to identify crypto tokens, projects and protocols in the text."},
-    {"role": "user", "content": text}
-  ]
-)
+# Using OPENAI to search video transcript for Tokens
+def transcript_search():
+    client = OpenAI()
 
-# print(completion.choices[0].message)
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto tokens, projects and protocols in the text."},
+        {"role": "user", "content": text}
+    ]
+    )
+    return completion.choices[0].message
 
 print(video_ids)
