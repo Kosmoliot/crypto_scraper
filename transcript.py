@@ -28,14 +28,14 @@ youtube = build("youtube", "v3", developerKey=API_KEY)
 request = youtube.search().list(
     part="snippet",
     channelId=CHANNEL_ID,
-    maxResults=50  # Adjust the number of results as needed
+    maxResults=100  # Adjust the number of results as needed
 )
 response = request.execute()
 
 # Extract video IDs from the response
 video_ids = [item["id"]["videoId"] for item in response["items"] if item["id"]["kind"] == "youtube#video"]
 
-text = transcript('qKL0EbFms0g')
+text = transcript(video_ids[0])
 
 client = OpenAI()
 
@@ -47,4 +47,6 @@ completion = client.chat.completions.create(
   ]
 )
 
-print(completion.choices[0].message)
+# print(completion.choices[0].message)
+
+print(video_ids)
