@@ -21,41 +21,40 @@ def transcript(video_id):
         video_transc.append(item['text'])
     return ' '.join(video_transc)
     
+def video_id_list():
+    # Define the YouTube API service
+    youtube = build("youtube", "v3", developerKey=API_KEY)
 
-# Define the YouTube API service
-youtube = build("youtube", "v3", developerKey=API_KEY)
+    # Define the time period
+    start_date = datetime(2024, 3, 20).strftime('%Y-%m-%dT%H:%M:%SZ')
+    end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-# Define the time period
-start_date = datetime(2024, 3, 20).strftime('%Y-%m-%dT%H:%M:%SZ')
-end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
+    # Retrieve videos from the channel
+    request = youtube.search().list(
+        part="snippet",
+        channelId=CHANNEL_ID,
+        publishedAfter = start_date,
+        publishedBefore = end_date,
+        maxResults=10  # Adjust the number of results as needed
+    )
+    response = request.execute()
 
-# Retrieve videos from the channel
-request = youtube.search().list(
-    part="snippet",
-    channelId=CHANNEL_ID,
-    publishedAfter = start_date,
-    publishedBefore = end_date,
-    maxResults=10  # Adjust the number of results as needed
-)
-response = request.execute()
+    # Extract video IDs from the response
+    video_ids = [item["id"]["videoId"] for item in response["items"] if item["id"]["kind"] == "youtube#video"]
+    return video_ids
 
-# Extract video IDs from the response
-video_ids = [item["id"]["videoId"] for item in response["items"] if item["id"]["kind"] == "youtube#video"]
-
-text = transcript(video_ids[0])
-
-
-# Using OPENAI to search video transcript for Tokens
-def transcript_search():
+# Using OPENAI to search video transcript for crypto Tokens/Coins
+def transcript_search(text):
     client = OpenAI()
 
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto tokens, projects and protocols in the text."},
+        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto tokens, projects and protocols in the text. Print them in a python list."},
         {"role": "user", "content": text}
     ]
     )
     return completion.choices[0].message
 
-print(video_ids)
+text = transcript(video_id_list()[-1])
+print(transcript_search(text))
