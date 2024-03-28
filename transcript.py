@@ -13,20 +13,21 @@ API_KEY = os.environ['YOUTUBE_API_KEY']
 # OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
-
+# Python module to get the video transcript
 def transcript(video_id):
     transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
     video_transc = []
     for item in transcript_list:
         video_transc.append(item['text'])
     return ' '.join(video_transc)
-    
+
+# Using Youtube API to get the video IDs  
 def video_id_list():
     # Define the YouTube API service
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
     # Define the time period
-    start_date = datetime(2024, 3, 20).strftime('%Y-%m-%dT%H:%M:%SZ')
+    start_date = datetime(2024, 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
     end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     # Retrieve videos from the channel
@@ -35,7 +36,9 @@ def video_id_list():
         channelId=CHANNEL_ID,
         publishedAfter = start_date,
         publishedBefore = end_date,
-        maxResults=10  # Adjust the number of results as needed
+        maxResults=100,  # Adjust the number of results as needed
+        type="video",
+        videoDuration="medium"
     )
     response = request.execute()
 
@@ -44,7 +47,7 @@ def video_id_list():
     return video_ids
 
 # Using OPENAI to search video transcript for crypto Tokens/Coins
-def transcript_search(text):
+def transcript_filter(text):
     client = OpenAI()
 
     completion = client.chat.completions.create(
@@ -54,7 +57,9 @@ def transcript_search(text):
         {"role": "user", "content": text}
     ]
     )
-    return completion.choices[0].message
+    return completion.choices[0].message.content
 
-text = transcript(video_id_list()[-1])
-print(transcript_search(text))
+# text = transcript(video_id_list()[-1])
+# print(transcript_filter(text))
+
+print(video_id_list())
