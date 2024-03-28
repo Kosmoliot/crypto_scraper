@@ -37,7 +37,7 @@ def video_id_list():
         publishedAfter = start_date,
         publishedBefore = end_date,
         maxResults=100,  # Adjust the number of results as needed
-        type="video",
+        type="video",   # Video length from 4 to 20 minutes
         videoDuration="medium"
     )
     response = request.execute()
