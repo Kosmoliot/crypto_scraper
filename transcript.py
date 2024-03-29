@@ -27,7 +27,7 @@ def video_id_list():
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
     # Define the time period
-    start_date = datetime(2024, 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+    start_date = datetime(2024, 3, 20).strftime('%Y-%m-%dT%H:%M:%SZ')
     end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     # Retrieve videos from the channel
@@ -43,8 +43,14 @@ def video_id_list():
     response = request.execute()
 
     # Extract video IDs from the response
-    video_ids = [item["id"]["videoId"] for item in response["items"] if item["id"]["kind"] == "youtube#video"]
-    return video_ids
+    videos = []
+    for item in response.get("items", []):
+        if item["id"]["kind"] == "youtube#video":
+            video_id = item["id"]["videoId"]
+            published_date = item["snippet"]["publishedAt"]
+            videos.append({"video_id": video_id, "published_date": published_date})
+
+    return videos
 
 # Using OPENAI to search video transcript for crypto Tokens/Coins
 def transcript_filter(text):
@@ -59,7 +65,9 @@ def transcript_filter(text):
     )
     return completion.choices[0].message.content
 
-# text = transcript(video_id_list()[-1])
-# print(transcript_filter(text))
+# text = transcript(video_id_list()[-1]['video_id'])
+# print(video_id_list()[-1]['published_date'])
+# print(text)
 
-print(video_id_list())
+for item in video_id_list():
+    print(item)
