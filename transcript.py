@@ -59,15 +59,15 @@ def transcript_filter(text):
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto tokens, projects and protocols in the text. Print them in a python list."},
+        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto coins. Display them as a python list."},
         {"role": "user", "content": text}
     ]
     )
     return completion.choices[0].message.content
 
-# text = transcript(video_id_list()[-1]['video_id'])
-# print(video_id_list()[-1]['published_date'])
-# print(text)
+text = transcript(video_id_list()[0]['video_id'])
+print(video_id_list()[-1]['published_date'])
+print(transcript_filter(text))
 
-for item in video_id_list():
-    print(item)
+# for item in video_id_list():
+#     print(item)
