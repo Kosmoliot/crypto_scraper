@@ -70,7 +70,7 @@ def transcript_filter(text):
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto coins. Display them as a python list."},
+        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto coins. Output should be in square brackets separated by comma and no other text"},
         {"role": "user", "content": text}
     ]
     )
@@ -84,4 +84,4 @@ def transcript_filter(text):
 #     print(item)
 
 for item in video_id_list():
-    print()
+    print(item.video_coins)
