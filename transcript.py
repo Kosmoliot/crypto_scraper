@@ -21,6 +21,15 @@ def transcript(video_id):
         video_transc.append(item['text'])
     return ' '.join(video_transc)
 
+
+class Chico_video():
+    def __init__(self, video_id, video_date, video_title, video_coins) -> None:
+        self.video_id = video_id
+        self.video_date = video_date
+        self.video_title = video_title
+        self.video_coins = video_coins
+
+
 # Using Youtube API to get the video IDs  
 def video_id_list():
     # Define the YouTube API service
@@ -48,7 +57,9 @@ def video_id_list():
         if item["id"]["kind"] == "youtube#video":
             video_id = item["id"]["videoId"]
             published_date = item["snippet"]["publishedAt"]
-            videos.append({"video_id": video_id, "published_date": published_date})
+            video_title = item["snippet"]["title"]
+            video_coins = transcript_filter(transcript(video_id))
+            videos.append(Chico_video(video_id, published_date, video_title, video_coins))
 
     return videos
 
@@ -65,9 +76,12 @@ def transcript_filter(text):
     )
     return completion.choices[0].message.content
 
-text = transcript(video_id_list()[0]['video_id'])
-print(video_id_list()[-1]['published_date'])
-print(transcript_filter(text))
+# text = transcript(video_id_list()[0]['video_id'])
+# print(video_id_list()[-1]['published_date'])
+# print(transcript_filter(text))
 
 # for item in video_id_list():
 #     print(item)
+
+for item in video_id_list():
+    print()
