@@ -70,7 +70,7 @@ def transcript_filter(text):
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "You are crypto trader, your goal is to identify crypto coins. Output should be in square brackets separated by comma and no other text"},
+        {"role": "system", "content": "You are a crypto trader, your goal is to identify positive crypto coins or projects. Output should be in square brackets separated by comma and no other text"},
         {"role": "user", "content": text}
     ]
     )

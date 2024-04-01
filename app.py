@@ -39,8 +39,10 @@ def root():
         cursor.execute("""
             CREATE TABLE Persons (
                 ID int NOT NULL PRIMARY KEY IDENTITY,
-                FirstName varchar(255),
-                LastName varchar(255)
+                Id varchar(255),
+                PublishedDate varchar(255)
+                Title varchar(255)
+                Coins NVARCHAR(MAX)
             );
         """)
 
@@ -50,35 +52,35 @@ def root():
         print(e)
     return "Person API"
 
-@app.get("/all")
-def get_persons():
-    rows = []
-    with get_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Persons")
+# @app.get("/all")
+# def get_persons():
+#     rows = []
+#     with get_conn() as conn:
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT * FROM Persons")
 
-        for row in cursor.fetchall():
-            print(row.FirstName, row.LastName)
-            rows.append(f"{row.ID}, {row.FirstName}, {row.LastName}")
-    return rows
+#         for row in cursor.fetchall():
+#             print(row.FirstName, row.LastName)
+#             rows.append(f"{row.ID}, {row.FirstName}, {row.LastName}")
+#     return rows
 
-@app.get("/person/{person_id}")
-def get_person(person_id: int):
-    with get_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Persons WHERE ID = ?", person_id)
+# @app.get("/person/{person_id}")
+# def get_person(person_id: int):
+#     with get_conn() as conn:
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT * FROM Persons WHERE ID = ?", person_id)
 
-        row = cursor.fetchone()
-        return f"{row.ID}, {row.FirstName}, {row.LastName}"
+#         row = cursor.fetchone()
+#         return f"{row.ID}, {row.FirstName}, {row.LastName}"
 
-@app.post("/person")
-def create_person(item: Person):
-    with get_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute(f"INSERT INTO Persons (FirstName, LastName) VALUES (?, ?)", item.first_name, item.last_name)
-        conn.commit()
+# @app.post("/person")
+# def create_person(item: Person):
+#     with get_conn() as conn:
+#         cursor = conn.cursor()
+#         cursor.execute(f"INSERT INTO Persons (FirstName, LastName) VALUES (?, ?)", item.first_name, item.last_name)
+#         conn.commit()
 
-    return item
+#     return item
 
 # def get_conn():
 #     credential = identity.DefaultAzureCredential(exclude_interactive_browser_credential=True)
