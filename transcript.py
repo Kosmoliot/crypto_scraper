@@ -76,12 +76,6 @@ def transcript_filter(text):
     )
     return completion.choices[0].message.content
 
-# text = transcript(video_id_list()[0]['video_id'])
-# print(video_id_list()[-1]['published_date'])
-# print(transcript_filter(text))
-
-# for item in video_id_list():
-#     print(item)
 
 for item in video_id_list():
     print(item.video_coins)
