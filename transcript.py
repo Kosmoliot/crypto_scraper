@@ -76,6 +76,5 @@ def transcript_filter(text):
     )
     return completion.choices[0].message.content
 
-
-for item in video_id_list():
-    print(item.video_coins)
+if __name__ == "__main__":
+    video_id_list()

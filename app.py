@@ -1,7 +1,7 @@
 import os
 import pyodbc, struct
 from azure import identity
-
+from transcript import video_id_list
 from typing import Union
 
 # FastAPI web framework for building APIs with Python. Uses Swagger UI to generate 
@@ -73,14 +73,35 @@ def root():
 #         row = cursor.fetchone()
 #         return f"{row.ID}, {row.FirstName}, {row.LastName}"
 
-# @app.post("/person")
-# def create_person(item: Person):
-#     with get_conn() as conn:
-#         cursor = conn.cursor()
-#         cursor.execute(f"INSERT INTO Persons (FirstName, LastName) VALUES (?, ?)", item.first_name, item.last_name)
-#         conn.commit()
+@app.post("/ingest")
+def ingest_data():
+    # Retrieve video IDs and other data
+    videos = video_id_list()
 
-#     return item
+    try:
+        # Establish connection to Azure SQL Database
+        conn = get_conn()
+        cursor = conn.cursor()
+
+        # Loop through the list of class objects and insert data into the database
+        for video in videos:
+            cursor.execute(
+                "INSERT INTO Coins (Video_Id, PublishedDate, Title, Coins) VALUES (?, ?, ?, ?)",
+                video.video_id, video.video_date, video.video_title, video.video_coins
+            )
+
+        # Commit the transaction
+        conn.commit()
+
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
+
+        return {"message": "Data successfully ingested into Azure SQL Database."}
+
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+
 
 # def get_conn():
 #     credential = identity.DefaultAzureCredential(exclude_interactive_browser_credential=True)
