@@ -56,7 +56,7 @@ def get_coins():
 
         for row in cursor.fetchall():
             print(row.Title, row.Published_Date)
-            rows.append(f"{row.Video_ID}, {row.Published_Date}, {row.Title}, {row.Coins}")
+            rows.append(f"{row.Video_Id}, {row.Published_Date}, {row.Title}, {row.Coins}")
     return rows
 
 @app.get("/Coins/{Video_Id}")
@@ -82,7 +82,7 @@ def ingest_data():
         # Loop through the list of class objects and insert data into the database
         for video in videos:
             cursor.execute(
-                "INSERT INTO Coins (Video_Id, PublishedDate, Title, Coins) VALUES (?, ?, ?, ?)",
+                "INSERT INTO Coins (Video_Id, Published_Date, Title, Coins) VALUES (?, ?, ?, ?)",
                 video.video_id, video.video_date, video.video_title, video.video_coins
             )
 
