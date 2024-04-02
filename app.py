@@ -59,11 +59,11 @@ def get_coins():
             rows.append(f"{row.Video_Id}, {row.Published_Date}, {row.Title}, {row.Coins}")
     return rows
 
-@app.get("/Coins/{Video_Id}")
-def get_person(Video_Id: int):
+@app.get("/Coins/{ID}")
+def get_person(ID: int):
     with get_conn() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Coins WHERE Video_Id = ?", Video_Id)
+        cursor.execute("SELECT * FROM Coins WHERE Video_Id = ?", ID)
 
         row = cursor.fetchone()
         return f"{row.Video_Id}, {row.Published_Date}, {row.Coins}"
