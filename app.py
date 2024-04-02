@@ -37,11 +37,11 @@ def root():
 
         # Table should be created ahead of time in production app.
         cursor.execute("""
-            CREATE TABLE Persons (
+            CREATE TABLE Coins (
                 ID int NOT NULL PRIMARY KEY IDENTITY,
-                Id varchar(255),
-                PublishedDate varchar(255)
-                Title varchar(255)
+                Video_Id varchar(255),
+                PublishedDate varchar(255),
+                Title varchar(255),
                 Coins NVARCHAR(MAX)
             );
         """)
