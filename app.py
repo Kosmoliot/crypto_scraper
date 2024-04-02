@@ -63,7 +63,7 @@ def get_coins():
 def get_person(ID: int):
     with get_conn() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Coins WHERE Video_Id = ?", ID)
+        cursor.execute("SELECT * FROM Coins WHERE ID = ?", ID)
 
         row = cursor.fetchone()
         return f"{row.Video_Id}, {row.Published_Date}, {row.Coins}"
