@@ -73,8 +73,8 @@ def transcript_filter(text):
         {"role": "system", "content": """You are analyzing a cryptocurrency youtube content creator.
          Your goal is to identify all the crypto coins or protocols that youtube content creator 
          regards as profitable or 'bullish'. Please put all of these crypto coin's or protocol's 
-         names in a single python list format, i.e. square brackets with no quotes, separated 
-         by comma and no other text"""},
+         names in a single python list format, i.e. all names in single quotes inside square brackets, 
+         separated by comma and no other text"""},
         {"role": "user", "content": text}
     ]
     )
