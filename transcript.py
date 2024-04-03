@@ -36,7 +36,7 @@ def video_id_list():
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
     # Define the time period
-    start_date = datetime(2024, 3, 20).strftime('%Y-%m-%dT%H:%M:%SZ')
+    start_date = datetime(2024, 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
     end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     # Retrieve videos from the channel
@@ -70,7 +70,7 @@ def transcript_filter(text):
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "You are a crypto trader, your goal is to identify positive crypto coins or projects. Output should be in square brackets separated by comma and no other text"},
+        {"role": "system", "content": "You are analyzing a crypto blogger, your goal is to identify all the crypto coins that he regards in a positive light. Output should be a list of crypto coins, printed in sa quare brackets separated by comma and no other text"},
         {"role": "user", "content": text}
     ]
     )
@@ -78,3 +78,5 @@ def transcript_filter(text):
 
 if __name__ == "__main__":
     video_id_list()
+    
+# print(transcript_filter(transcript("T8pg4UhJVPY")))
