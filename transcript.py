@@ -3,7 +3,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
 from openai import OpenAI
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 load_dotenv()
@@ -31,25 +31,25 @@ class Chico_video():
 
 
 # Using Youtube API to get the video IDs  
-def video_id_list():
-    # Define the YouTube API service
-    youtube = build("youtube", "v3", developerKey=API_KEY)
+def get_video_ids():
+    # Define the YouTube API service. Achieving resource cleanup by using "with" statement
+    with build("youtube", "v3", developerKey=API_KEY) as youtube:
 
-    # Define the time period
-    start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
-    end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
+        # Define the time period
+        start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+        end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    # Retrieve videos from the channel
-    request = youtube.search().list(
-        part="snippet",
-        channelId=CHANNEL_ID,
-        publishedAfter = start_date,
-        publishedBefore = end_date,
-        maxResults=100,  # Adjust the number of results as needed
-        type="video",   # Necessary for using videoDuration parameter
-        videoDuration="medium"  # Video length from 4 to 20 minutes
-    )
-    response = request.execute()
+        # Retrieve videos from the channel
+        request = youtube.search().list(
+            part="snippet",
+            channelId=CHANNEL_ID,
+            publishedAfter = start_date,
+            publishedBefore = end_date,
+            maxResults=100,  # Adjust the number of results as needed
+            type="video",   # Necessary for using videoDuration parameter
+            videoDuration="medium"  # Video length from 4 to 20 minutes
+        )
+        response = request.execute()
 
     # Extract video IDs from the response
     videos = []
@@ -81,6 +81,6 @@ def transcript_filter(text):
     return completion.choices[0].message.content
 
 if __name__ == "__main__":
-    video_id_list()
+    get_video_ids()
     
 # print(transcript_filter(transcript("AWcANLA2mgU")))
