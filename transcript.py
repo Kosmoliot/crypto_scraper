@@ -36,7 +36,7 @@ def video_id_list():
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
     # Define the time period
-    start_date = datetime(2024, 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+    start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
     end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     # Retrieve videos from the channel
