@@ -45,45 +45,32 @@ def get_video_ids():
         # Define the YouTube API service. Achieving resource cleanup by using "with" statement
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
 
-            videos =[]
-            
             # Define the time period
             start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
             end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
-            
-            next_page_token = None
-            
-            # Fetch initial page of results
-            while True:
-                # Retrieve videos from the channel with pagination
-                request = youtube.search().list(
-                    part="snippet",
-                    channelId=CHANNEL_ID,
-                    publishedAfter = start_date,
-                    publishedBefore = end_date,
-                    maxResults=10,  # Adjust the number of results as needed
-                    type="video",   # Necessary for using videoDuration parameter
-                    videoDuration="medium" , # Video length from 4 to 20 minutes
-                    pageToken=next_page_token # Include pagination token
-                )
-                response = request.execute()
-                
-                # Extract video IDs, date, title, and coim list fro, the response
-                for item in response.get("item", []):
-                    if item["id"]["kind"] == "youtube#video":
-                        video_id = item["id"]["videoId"]
-                        published_date = item["snippet"]["publishedAt"]
-                        video_title = item["snippet"]["title"]
-                        video_coins = transcript_filter(transcript(video_id))
-                        videos.append(Chico_video(video_id, published_date, video_title, video_coins))
-                
-                # Check if there are more pages of results
-                next_page_token = response.get("nextPageToken")
-                if not next_page_token:
-                    break # Exit loop if no more pages
-                
-            return videos
 
+            # Retrieve videos from the channel
+            request = youtube.search().list(
+                part="snippet",
+                channelId=CHANNEL_ID,
+                publishedAfter = start_date,
+                publishedBefore = end_date,
+                maxResults=100,  # Adjust the number of results as needed
+                type="video",   # Necessary for using videoDuration parameter
+                videoDuration="medium"  # Video length from 4 to 20 minutes
+            )
+            response = request.execute()
+
+        videos = []
+        for item in response.get("items", []):
+            if item["id"]["kind"] == "youtube#video":
+                video_id = item["id"]["videoId"]
+                published_date = item["snippet"]["publishedAt"]
+                video_title = item["snippet"]["title"]
+                video_coins = transcript_filter(transcript(video_id))
+                videos.append(Chico_video(video_id, published_date, video_title, video_coins))
+        return videos
+    
     except Exception as e:
         print(f"Failed to retrieve a list of videos: {e}")
         return []
@@ -109,7 +96,7 @@ def transcript_filter(text):
     except Exception as e:
         print(f"Failed to filter transcript: {e}")
 
-# if __name__ == "__main__":
-#     get_video_ids()
+if __name__ == "__main__":
+    get_video_ids()
     
-print(get_video_ids())
+# print(transcript_filter(transcript("AWcANLA2mgU")))
