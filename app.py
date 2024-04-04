@@ -1,7 +1,7 @@
 import os
 import pyodbc, struct
 from azure import identity
-from transcript import video_id_list
+from transcript import get_video_ids
 from typing import Union
 
 # FastAPI web framework for building APIs with Python. Uses Swagger UI to generate 
