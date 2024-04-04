@@ -13,7 +13,7 @@ API_KEY = os.environ['YOUTUBE_API_KEY']
 # OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
-# Python module to get the video transcript
+# Using YouTube API to get the video transcript
 def transcript(video_id):
     transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
     video_transc = []
@@ -21,7 +21,7 @@ def transcript(video_id):
         video_transc.append(item['text'])
     return ' '.join(video_transc)
 
-
+# Creating a class to store each video parameter
 class Chico_video():
     def __init__(self, video_id, video_date, video_title, video_coins) -> None:
         self.video_id = video_id
@@ -51,7 +51,8 @@ def get_video_ids():
         )
         response = request.execute()
 
-    # Extract video IDs from the response
+    # Extract video IDs, date, title and coin list from the response
+    # and create a class object
     videos = []
     for item in response.get("items", []):
         if item["id"]["kind"] == "youtube#video":
