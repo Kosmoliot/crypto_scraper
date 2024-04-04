@@ -9,17 +9,24 @@ from datetime import datetime
 load_dotenv()
 
 # Define API key and channel ID
-API_KEY = os.environ['YOUTUBE_API_KEY']
+API_KEY = os.getenv('YOUTUBE_API_KEY')
+if not API_KEY:
+    raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
+
 # OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
 # Using YouTube API to get the video transcript
 def transcript(video_id):
-    transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-    video_transc = []
-    for item in transcript_list:
-        video_transc.append(item['text'])
-    return ' '.join(video_transc)
+    try:
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+        video_transc = []
+        for item in transcript_list:
+            video_transc.append(item['text'])
+        return ' '.join(video_transc)
+    except Exception as e:
+        print(f"Failed to retrieve transcript for video {video_id}: {e}")
+        return None
 
 # Creating a class to store each video parameter
 class Chico_video():
@@ -32,54 +39,61 @@ class Chico_video():
 
 # Using Youtube API to get the video IDs  
 def get_video_ids():
-    # Define the YouTube API service. Achieving resource cleanup by using "with" statement
-    with build("youtube", "v3", developerKey=API_KEY) as youtube:
+    try:
+        # Define the YouTube API service. Achieving resource cleanup by using "with" statement
+        with build("youtube", "v3", developerKey=API_KEY) as youtube:
 
-        # Define the time period
-        start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
-        end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
+            # Define the time period
+            start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+            end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-        # Retrieve videos from the channel
-        request = youtube.search().list(
-            part="snippet",
-            channelId=CHANNEL_ID,
-            publishedAfter = start_date,
-            publishedBefore = end_date,
-            maxResults=100,  # Adjust the number of results as needed
-            type="video",   # Necessary for using videoDuration parameter
-            videoDuration="medium"  # Video length from 4 to 20 minutes
-        )
-        response = request.execute()
+            # Retrieve videos from the channel
+            request = youtube.search().list(
+                part="snippet",
+                channelId=CHANNEL_ID,
+                publishedAfter = start_date,
+                publishedBefore = end_date,
+                maxResults=100,  # Adjust the number of results as needed
+                type="video",   # Necessary for using videoDuration parameter
+                videoDuration="medium"  # Video length from 4 to 20 minutes
+            )
+            response = request.execute()
 
-    # Extract video IDs, date, title and coin list from the response
-    # and create a class object
-    videos = []
-    for item in response.get("items", []):
-        if item["id"]["kind"] == "youtube#video":
-            video_id = item["id"]["videoId"]
-            published_date = item["snippet"]["publishedAt"]
-            video_title = item["snippet"]["title"]
-            video_coins = transcript_filter(transcript(video_id))
-            videos.append(Chico_video(video_id, published_date, video_title, video_coins))
-
-    return videos
+        # Extract video IDs, date, title and coin list from the response
+        # and create a class object
+        videos = []
+        for item in response.get("items", []):
+            if item["id"]["kind"] == "youtube#video":
+                video_id = item["id"]["videoId"]
+                published_date = item["snippet"]["publishedAt"]
+                video_title = item["snippet"]["title"]
+                video_coins = transcript_filter(transcript(video_id))
+                videos.append(Chico_video(video_id, published_date, video_title, video_coins))
+        return videos
+    
+    except Exception as e:
+        print(f"Failed to retrieve a list of videos: {e}")
+        return []
 
 # Using OPENAI to search video transcript for crypto Tokens/Coins
 def transcript_filter(text):
-    client = OpenAI()
+    try:
+        client = OpenAI()
 
-    completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": """You are analyzing a cryptocurrency youtube content creator.
-         Your goal is to identify all the crypto coins or protocols that youtube content creator 
-         regards as profitable or 'bullish'. Please put all of these crypto coin's or protocol's 
-         names in a single python list format, i.e. all names in single quotes inside square brackets, 
-         separated by comma and no other text"""},
-        {"role": "user", "content": text}
-    ]
-    )
-    return completion.choices[0].message.content
+        completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": """You are analyzing a cryptocurrency youtube content creator.
+            Your goal is to identify all the crypto coins or protocols that youtube content creator 
+            regards as profitable or 'bullish'. Please put all of these crypto coin's or protocol's 
+            names in a single python list format, i.e. all names in single quotes inside square brackets, 
+            separated by comma and no other text"""},
+            {"role": "user", "content": text}
+        ]
+        )
+        return completion.choices[0].message.content
+    except Exception as e:
+        print(f"Failed to filter transcript: {e}")
 
 if __name__ == "__main__":
     get_video_ids()
