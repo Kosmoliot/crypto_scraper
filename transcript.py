@@ -1,4 +1,4 @@
-import os
+import os, requests_cache
 from youtube_transcript_api import YouTubeTranscriptApi
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
@@ -8,16 +8,18 @@ from datetime import datetime
 
 load_dotenv()
 
+#Enable caching with a cache name and expiration time (in seconds)
+requests_cache.install_cache('youtube_api_cache', expire_after=3600) #cache expires after an 1 hour
+
 # Define API key and channel ID
 API_KEY = os.getenv('YOUTUBE_API_KEY')
 if not API_KEY:
     raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
 
-# OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
-# Using YouTube API to get the video transcript
 def transcript(video_id):
+    """Retrieve transcript for a given video ID."""
     try:
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
         video_transc = []
@@ -28,8 +30,8 @@ def transcript(video_id):
         print(f"Failed to retrieve transcript for video {video_id}: {e}")
         return None
 
-# Creating a class to store each video parameter
 class Chico_video():
+    """Class to store video parameters."""
     def __init__(self, video_id, video_date, video_title, video_coins) -> None:
         self.video_id = video_id
         self.video_date = video_date
@@ -37,8 +39,8 @@ class Chico_video():
         self.video_coins = video_coins
 
 
-# Using Youtube API to get the video IDs  
 def get_video_ids():
+    """Retrieve video IDs, date, title, and coins list."""
     try:
         # Define the YouTube API service. Achieving resource cleanup by using "with" statement
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
@@ -59,8 +61,6 @@ def get_video_ids():
             )
             response = request.execute()
 
-        # Extract video IDs, date, title and coin list from the response
-        # and create a class object
         videos = []
         for item in response.get("items", []):
             if item["id"]["kind"] == "youtube#video":
@@ -75,8 +75,9 @@ def get_video_ids():
         print(f"Failed to retrieve a list of videos: {e}")
         return []
 
-# Using OPENAI to search video transcript for crypto Tokens/Coins
+
 def transcript_filter(text):
+    """"Filter transcript using OpenAI."""
     try:
         client = OpenAI()
 
