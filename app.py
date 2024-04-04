@@ -89,7 +89,7 @@ def delete_table():
 @app.post("/Ingest data")
 def ingest_data():
     # Retrieve video IDs and other data
-    videos = video_id_list()
+    videos = get_video_ids()
 
     try:
         # Establish connection to Azure SQL Database
