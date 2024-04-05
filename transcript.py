@@ -1,4 +1,4 @@
-import os, requests_cache
+import os
 from youtube_transcript_api import YouTubeTranscriptApi
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
@@ -7,9 +7,6 @@ from datetime import datetime
 
 
 load_dotenv()
-
-#Enable caching with a cache name and expiration time (in seconds)
-requests_cache.install_cache('youtube_api_cache', expire_after=3600) #cache expires after an 1 hour
 
 # Define API key and channel ID
 API_KEY = os.getenv('YOUTUBE_API_KEY')
@@ -64,7 +61,6 @@ def get_video_ids():
                     maxResults=10,  # Adjust the number of results as needed
                     type="video",   # Necessary for using videoDuration parameter
                     videoDuration="medium" , # Video length from 4 to 20 minutes
-                    pageToken=next_page_token # Include pagination token
                 )
                 response = request.execute()
                 
@@ -77,12 +73,7 @@ def get_video_ids():
                         video_coins = transcript_filter(transcript(video_id))
                         videos.append(Chico_video(video_id, published_date, video_title, video_coins))
                 
-                # Check if there are more pages of results
-                next_page_token = response.get("nextPageToken")
-                if not next_page_token:
-                    break # Exit loop if no more pages
-                
-            return videos
+                return videos
 
     except Exception as e:
         print(f"Failed to retrieve a list of videos: {e}")
