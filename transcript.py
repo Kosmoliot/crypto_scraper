@@ -35,6 +35,9 @@ class Chico_video():
         self.video_title = video_title
         self.video_coins = video_coins
 
+# Need a code to implement caching
+# Code goes here ->
+
 
 def get_video_ids():
     """Retrieve video IDs, date, title, and coins list."""
