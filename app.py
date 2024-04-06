@@ -46,6 +46,7 @@ def root():
         print(e)
     return "Coins API"
 
+# Print all the videos and their data
 @app.get("/all")
 def get_coins():
     rows = []
@@ -58,6 +59,7 @@ def get_coins():
             rows.append(f"{row.Video_Id}, {row.Published_Date}, {row.Title}, {row.Coins}")
     return rows
 
+# Fetch the video data by table ID
 @app.get("/Coins/{ID}")
 def get_person(ID: int):
     with get_conn() as conn:
