@@ -79,6 +79,7 @@ def transcript_filter(text):
     try:
         client = OpenAI()
 
+        # Using GPT-3.5 to generate the list of coins from the youtube video transcript
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
