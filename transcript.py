@@ -1,11 +1,9 @@
-import os
+import os, json
 from youtube_transcript_api import YouTubeTranscriptApi
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import datetime
-import json
-
 
 load_dotenv()
 
