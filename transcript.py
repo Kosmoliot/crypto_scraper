@@ -16,7 +16,7 @@ if not API_KEY:
 
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
-class Chico_video():
+class ChicoVideo():
     """Class to store video parameters."""
     def __init__(self, video_id, video_date, video_title, video_coins) -> None:
         self.video_id = video_id
@@ -39,7 +39,10 @@ def get_videos_data():
     """Retrieve video IDs, date, title, and coins list."""
     try:
         # Load cached data if available
-        
+        if os.path.exists('cached_data.json'):
+            with open('cached_data.json', 'r') as file:
+                return json.load(file)
+            
         # Define the YouTube API service. Achieving resource cleanup by using "with" statement
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
             
@@ -51,8 +54,8 @@ def get_videos_data():
             request = youtube.search().list(
                 part="snippet",
                 channelId=CHANNEL_ID,
-                publishedAfter = start_date,
-                publishedBefore = end_date,
+                publishedAfter=start_date,
+                publishedBefore=end_date,
                 maxResults=10,  # Adjust the number of results as needed
                 type="video",   # Necessary for using videoDuration parameter
                 videoDuration="medium" , # Video length from 4 to 20 minutes
@@ -65,9 +68,13 @@ def get_videos_data():
                     video_id = item["id"]["videoId"]
                     published_date = item["snippet"]["publishedAt"]
                     video_title = item["snippet"]["title"]
-                    video_coins = transcript_filter(get_transcript(video_id))
-                    videos.append(Chico_video(video_id, published_date, video_title, video_coins))
+                    video_coins = filter_transcript(get_transcript(video_id))
+                    videos.append(ChicoVideo(video_id, published_date, video_title, video_coins))
             
+            # Cache the data
+            with open('cached_data.json', 'w') as file:
+                json.dump(videos, file, default=lambda x: x.__dict__)
+
             return videos
 
     except Exception as e:
@@ -75,7 +82,7 @@ def get_videos_data():
         return []
 
 
-def transcript_filter(text):
+def filter_transcript(text):
     """"Filter transcript using OpenAI."""
     try:
         client = OpenAI()
