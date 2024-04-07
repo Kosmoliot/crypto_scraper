@@ -1,6 +1,6 @@
 import os
 import pyodbc, struct
-from transcript import get_video_ids
+from transcript import get_video_data
 from typing import Union
 
 # FastAPI web framework for building APIs with Python. Uses Swagger UI to generate 
@@ -90,7 +90,7 @@ def delete_table():
 @app.post("/Ingest data")
 def ingest_data():
     # Retrieve video IDs and other data
-    videos = get_video_ids()
+    videos = get_video_data()
 
     try:
         # Establish connection to Azure SQL Database
@@ -101,7 +101,7 @@ def ingest_data():
         for video in videos:
             cursor.execute(
                 "INSERT INTO Coins (Video_Id, Published_Date, Title, Coins) VALUES (?, ?, ?, ?)",
-                video.video_id, video.video_date, video.video_title, video.video_coins
+                video['video_id'], video['video_date'], video['video_title'], video['video_coins']
             )
 
         # Commit the transaction

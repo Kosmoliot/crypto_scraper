@@ -35,7 +35,7 @@ def get_transcript(video_id):
         print(f"Failed to retrieve transcript for video {video_id}: {e}")
         return None
 
-def get_videos_data():
+def get_video_data():
     """Retrieve video IDs, date, title, and coins list."""
     try:
         # Load cached data if available
@@ -47,7 +47,7 @@ def get_videos_data():
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
             
             # Define the time period
-            start_date = datetime(2024, 4, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+            start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
             end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
         
             videos =[]
@@ -104,6 +104,6 @@ def filter_transcript(text):
         print(f"Failed to filter transcript: {e}")
 
 # if __name__ == "__main__":
-#     get_videos_data()
+#     get_video_data()
     
-print(get_videos_data())
+print(get_video_data())
