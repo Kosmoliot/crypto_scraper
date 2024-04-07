@@ -4,6 +4,7 @@ from googleapiclient.discovery import build
 from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import datetime
+import json
 
 
 load_dotenv()
@@ -15,18 +16,6 @@ if not API_KEY:
 
 CHANNEL_ID = "UCHop-jpf-huVT1IYw79ymPw"
 
-def transcript(video_id):
-    """Retrieve transcript for a given video ID."""
-    try:
-        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-        video_transc = []
-        for item in transcript_list:
-            video_transc.append(item['text'])
-        return ' '.join(video_transc)
-    except Exception as e:
-        print(f"Failed to retrieve transcript for video {video_id}: {e}")
-        return None
-
 class Chico_video():
     """Class to store video parameters."""
     def __init__(self, video_id, video_date, video_title, video_coins) -> None:
@@ -35,18 +24,27 @@ class Chico_video():
         self.video_title = video_title
         self.video_coins = video_coins
 
-# Need a code to implement caching
-# Code goes here ->
+def get_transcript(video_id):
+    """Retrieve transcript for a given video ID."""
+    try:
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
 
+        video_transcript = ' '.join(item['text'] for item in transcript_list)
+        return video_transcript
+    except Exception as e:
+        print(f"Failed to retrieve transcript for video {video_id}: {e}")
+        return None
 
-def get_video_ids():
+def get_videos_data():
     """Retrieve video IDs, date, title, and coins list."""
     try:
+        # Load cached data if available
+        
         # Define the YouTube API service. Achieving resource cleanup by using "with" statement
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
             
             # Define the time period
-            start_date = datetime(2024, 3, 15).strftime('%Y-%m-%dT%H:%M:%SZ')
+            start_date = datetime(2024, 4, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
             end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
         
             videos =[]
@@ -67,7 +65,7 @@ def get_video_ids():
                     video_id = item["id"]["videoId"]
                     published_date = item["snippet"]["publishedAt"]
                     video_title = item["snippet"]["title"]
-                    video_coins = transcript_filter(transcript(video_id))
+                    video_coins = transcript_filter(get_transcript(video_id))
                     videos.append(Chico_video(video_id, published_date, video_title, video_coins))
             
             return videos
@@ -99,6 +97,6 @@ def transcript_filter(text):
         print(f"Failed to filter transcript: {e}")
 
 # if __name__ == "__main__":
-#     get_video_ids()
+#     get_videos_data()
     
-print(get_video_ids())
+print(get_videos_data())
