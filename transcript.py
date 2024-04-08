@@ -33,6 +33,11 @@ def get_transcript(video_id):
         print(f"Failed to retrieve transcript for video {video_id}: {e}")
         return None
 
+def formatted_date(given_date):
+    date_format = given_date.split(',')
+    return datetime(int(date_format[0]), int(date_format[1]), int(date_format[2]))
+
+
 def fetch_video_data(start_date, end_date):
     """Retrieve video IDs, date, title, and coins list."""
     try:    
@@ -40,8 +45,8 @@ def fetch_video_data(start_date, end_date):
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
             
             # Define the time period
-            start_date_str = datetime(start_date, '%Y-%m-%d').strftime('%Y-%m-%dT%H:%M:%SZ')
-            end_date_str = datetime(end_date, '%Y-%m-%d').strftime('%Y-%m-%dT%H:%M:%SZ')
+            start_date_str = formatted_date(start_date).strftime('%Y-%m-%dT%H:%M:%SZ')
+            end_date_str = formatted_date(end_date).strftime('%Y-%m-%dT%H:%M:%SZ')
         
             videos =[]
             request = youtube.search().list(
@@ -106,8 +111,6 @@ def filter_transcript(text):
 # if __name__ == "__main__":
 #     fetch_video_data()
 
-start_date = '2024-03-01'
-# end_date = '2024-12-31'
-# print(fetch_video_data(start_date, end_date))
-
-print(datetime(start_date).strftime('%Y-%m-%dT%H:%M:%SZ'))
+start_date = '2024,3,1'
+end_date = '2024,12,31'
+print(fetch_video_data(start_date, end_date))
