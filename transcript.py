@@ -34,6 +34,7 @@ def get_transcript(video_id):
         return None
 
 def formatted_date(given_date):
+    """Formating date to a necessary format"""
     date_format = given_date.split(',')
     return datetime(int(date_format[0]), int(date_format[1]), int(date_format[2]))
 
@@ -75,15 +76,31 @@ def fetch_video_data(start_date, end_date):
         return []
 
 
-def get_video_data():
-    pass
-        # # Load cached data if available
-        # if os.path.exists('cached_data.json'):
-        #     with open('cached_data.json', 'r') as file:
-        #         return json.load(file)
-        # Cache the data
-        # with open('cached_data.json', 'w') as file:
-        #     json.dump(videos, file, default=lambda x: x.__dict__)
+def get_video_data(start_date, end_date):
+    cache_filename = f'cached_data_{start_date}_{end_date}.json'
+    if os.path.exists(cache_filename):
+        with open(cache_filename, 'r') as file:
+            return json.load(file)
+
+    existing_data = []
+    for filename in os.listdir('.'):
+        if filename.startswith('cached_data'):
+            cached_start_date, cached_end_date = filename.split('_')[2:0]
+            if start_date <= cached_start_date and end_date >= cached_end_date:
+                pass
+        pass
+
+
+
+    # Load cached data if available    
+    # if os.path.exists('cached_data.json'):
+    #     with open('cached_data.json', 'r') as file:
+    #         return json.load(file)
+        
+
+    # Cache the data
+    # with open('cached_data.json', 'w') as file:
+    #     json.dump(videos, file, default=lambda x: x.__dict__)
 
 
 
@@ -113,4 +130,5 @@ def filter_transcript(text):
 
 start_date = '2024,3,1'
 end_date = '2024,12,31'
-print(fetch_video_data(start_date, end_date))
+# print(fetch_video_data(start_date, end_date))
+get_video_data(start_date, end_date)
