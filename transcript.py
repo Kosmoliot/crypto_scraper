@@ -33,27 +33,28 @@ def get_transcript(video_id):
         print(f"Failed to retrieve transcript for video {video_id}: {e}")
         return None
 
-def get_video_data():
+def formatted_date(given_date):
+    """Formating date to a necessary format"""
+    date_format = given_date.split(',')
+    return datetime(int(date_format[0]), int(date_format[1]), int(date_format[2]))
+
+
+def fetch_video_data(start_date, end_date):
     """Retrieve video IDs, date, title, and coins list."""
-    try:
-        # Load cached data if available
-        if os.path.exists('cached_data.json'):
-            with open('cached_data.json', 'r') as file:
-                return json.load(file)
-            
+    try:    
         # Define the YouTube API service. Achieving resource cleanup by using "with" statement
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
             
             # Define the time period
-            start_date = datetime(2024, 3, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
-            end_date = datetime(2024, 12, 31).strftime('%Y-%m-%dT%H:%M:%SZ')
+            start_date_str = formatted_date(start_date).strftime('%Y-%m-%dT%H:%M:%SZ')
+            end_date_str = formatted_date(end_date).strftime('%Y-%m-%dT%H:%M:%SZ')
         
             videos =[]
             request = youtube.search().list(
                 part="snippet",
                 channelId=CHANNEL_ID,
-                publishedAfter=start_date,
-                publishedBefore=end_date,
+                publishedAfter=start_date_str,
+                publishedBefore=end_date_str,
                 maxResults=10,  # Adjust the number of results as needed
                 type="video",   # Necessary for using videoDuration parameter
                 videoDuration="medium" , # Video length from 4 to 20 minutes
@@ -68,16 +69,39 @@ def get_video_data():
                     video_title = item["snippet"]["title"]
                     video_coins = filter_transcript(get_transcript(video_id))
                     videos.append(ChicoVideo(video_id, published_date, video_title, video_coins))
-            
-            # Cache the data
-            with open('cached_data.json', 'w') as file:
-                json.dump(videos, file, default=lambda x: x.__dict__)
-
             return videos
 
     except Exception as e:
         print(f"Failed to retrieve a list of videos: {e}")
         return []
+
+
+def get_video_data(start_date, end_date):
+    cache_filename = f'cached_data_{start_date}_{end_date}.json'
+    if os.path.exists(cache_filename):
+        with open(cache_filename, 'r') as file:
+            return json.load(file)
+
+    existing_data = []
+    for filename in os.listdir('.'):
+        if filename.startswith('cached_data'):
+            cached_start_date, cached_end_date = filename.split('_')[2:0]
+            if start_date <= cached_start_date and end_date >= cached_end_date:
+                pass
+        pass
+
+
+
+    # Load cached data if available    
+    # if os.path.exists('cached_data.json'):
+    #     with open('cached_data.json', 'r') as file:
+    #         return json.load(file)
+        
+
+    # Cache the data
+    # with open('cached_data.json', 'w') as file:
+    #     json.dump(videos, file, default=lambda x: x.__dict__)
+
 
 
 def filter_transcript(text):
@@ -102,6 +126,9 @@ def filter_transcript(text):
         print(f"Failed to filter transcript: {e}")
 
 # if __name__ == "__main__":
-#     get_video_data()
-    
-print(get_video_data())
+#     fetch_video_data()
+
+start_date = '2024,3,1'
+end_date = '2024,12,31'
+# print(fetch_video_data(start_date, end_date))
+get_video_data(start_date, end_date)
