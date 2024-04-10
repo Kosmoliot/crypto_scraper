@@ -76,19 +76,19 @@ def fetch_video_data(start_date, end_date):
         return []
 
 
-def get_video_data(start_date, end_date):
-    cache_filename = f'cached_data_{start_date}_{end_date}.json'
-    if os.path.exists(cache_filename):
-        with open(cache_filename, 'r') as file:
-            return json.load(file)
+# def get_video_data(start_date, end_date):
+#     cache_filename = f'cached_data_{start_date}_{end_date}.json'
+#     if os.path.exists(cache_filename):
+#         with open(cache_filename, 'r') as file:
+#             return json.load(file)
 
-    existing_data = []
-    for filename in os.listdir('.'):
-        if filename.startswith('cached_data'):
-            cached_start_date, cached_end_date = filename.split('_')[2:0]
-            if start_date <= cached_start_date and end_date >= cached_end_date:
-                pass
-        pass
+#     existing_data = []
+#     for filename in os.listdir('.'):
+#         if filename.startswith('cached_data'):
+#             cached_start_date, cached_end_date = filename.split('_')[2:0]
+#             if start_date <= cached_start_date and end_date >= cached_end_date:
+#                 pass
+#         pass
 
 
 
@@ -125,10 +125,10 @@ def filter_transcript(text):
     except Exception as e:
         print(f"Failed to filter transcript: {e}")
 
-# if __name__ == "__main__":
-#     fetch_video_data()
+if __name__ == "__main__":
+    fetch_video_data()
 
-start_date = '2024,3,1'
-end_date = '2024,12,31'
-# print(fetch_video_data(start_date, end_date))
-get_video_data(start_date, end_date)
+# start_date = '2024,3,1'
+# end_date = '2024,12,31'
+# # print(fetch_video_data(start_date, end_date))
+# get_video_data(start_date, end_date)
