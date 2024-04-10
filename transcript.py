@@ -64,7 +64,7 @@ def fetch_video_data(start_date, end_date):
                 channelId=CHANNEL_ID,
                 publishedAfter=start_date_str,
                 publishedBefore=end_date_str,
-                maxResults=10,  # Adjust the number of results as needed
+                maxResults=1000,  # Adjust the number of results as needed
                 type="video",   # Necessary for using videoDuration parameter
                 videoDuration="medium" , # Video length from 4 to 20 minutes
             )
