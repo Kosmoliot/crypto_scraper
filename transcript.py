@@ -42,11 +42,14 @@ def formatted_date(given_date):
 def fetch_video_data(start_date, end_date):
     """Retrieve video IDs, date, title, and coins list."""
     try:
-        cache_filename = f"cached_data/cache_data_{start_date}_{end_date}.json"
+        cache_dir = "cache_data"
+        os.makedirs(cache_dir, exist_ok=True)
+        cache_filename = os.path.join(cache_dir, f"cache_data_{start_date}_{end_date}.json")
+
         if os.path.exists(cache_filename):
             with open(cache_filename, 'r') as file:
-                cached_data = json.load(file)
-                return cached_data
+                return json.load(file)
+
 
         # Define the YouTube API service. Achieving resource cleanup by using "with" statement
         with build("youtube", "v3", developerKey=API_KEY) as youtube:
