@@ -22,29 +22,6 @@ connection_string = os.environ["AZURE_SQL_CONNECTIONSTRING"]
 
 app = FastAPI()
 
-@app.get("/Create Table")
-def root():
-    print("Root of Coins API")
-    try:
-        conn = get_conn()
-        cursor = conn.cursor()
-
-        # Table should be created ahead of time in production app.
-        cursor.execute("""
-            CREATE TABLE Coins (
-                ID int NOT NULL PRIMARY KEY IDENTITY,
-                Video_Id varchar(255),
-                Published_Date varchar(255),
-                Title varchar(255),
-                Coins NVARCHAR(MAX)
-            );
-        """)
-
-        conn.commit()
-    except Exception as e:
-        # Table may already exist
-        print(e)
-    return "Coins table created in the database."
 
 # Print all the videos and their data
 @app.get("/All")
@@ -68,6 +45,30 @@ def get_person(ID: int):
 
         row = cursor.fetchone()
         return f"{row.Video_Id}, {row.Published_Date}, {row.Coins}"
+
+@app.get("/Create Table")
+def root():
+    print("Root of Coins API")
+    try:
+        conn = get_conn()
+        cursor = conn.cursor()
+
+        # Table should be created ahead of time in production app.
+        cursor.execute("""
+            CREATE TABLE Coins (
+                ID int NOT NULL PRIMARY KEY IDENTITY,
+                Video_Id varchar(255),
+                Published_Date varchar(255),
+                Title varchar(255),
+                Coins NVARCHAR(MAX)
+            );
+        """)
+
+        conn.commit()
+    except Exception as e:
+        # Table may already exist
+        print(e)
+    return "Coins table created in the database."
 
 # Delete Coins table from the database
 @app.get("/Delete table")
