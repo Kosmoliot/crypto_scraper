@@ -22,7 +22,7 @@ connection_string = os.environ["AZURE_SQL_CONNECTIONSTRING"]
 
 app = FastAPI()
 
-@app.get("/")
+@app.get("/Create Table")
 def root():
     print("Root of Coins API")
     try:
@@ -44,10 +44,10 @@ def root():
     except Exception as e:
         # Table may already exist
         print(e)
-    return "Coins API"
+    return "Coins table created in the database."
 
 # Print all the videos and their data
-@app.get("/all")
+@app.get("/All")
 def get_coins():
     rows = []
     with get_conn() as conn:
