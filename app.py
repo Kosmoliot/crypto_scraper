@@ -16,7 +16,7 @@ from pydantic import BaseModel
 # Uses load_dotenv to load a connection string from .env file
 from dotenv import load_dotenv
 
-
+# Creating classes to use in request Validation
 class IngestDataRequest(BaseModel):
     start_date: str
     end_date: str
