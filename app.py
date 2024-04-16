@@ -1,7 +1,7 @@
 import os
 import pyodbc
 from transcript import fetch_video_data
-from typing import List, Optional
+
 
 # FastAPI web framework for building APIs with Python. Uses Swagger UI to generate 
 # interactive API documentation that lets your users try out the API calls directly 
