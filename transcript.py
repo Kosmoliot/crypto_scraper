@@ -111,9 +111,9 @@ def filter_transcript(text):
         print(f"Failed to filter transcript: {e}")
 
 if __name__ == "__main__":
-    fetch_video_data(start_date='2023,1,1', end_date='2024,12,31')
+    fetch_video_data()
 
-# start_date = '2024,4,8'
+# start_date = '2024,1,1'
 # end_date = '2024,12,31'
-# # print(fetch_video_data(start_date, end_date))
 # print(fetch_video_data(start_date, end_date))
+
