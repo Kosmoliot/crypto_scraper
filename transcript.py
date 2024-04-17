@@ -81,8 +81,9 @@ def fetch_video_data(start_date, end_date):
 
         with open(cache_filename, 'w') as file:
             json.dump([vars(video) for video in videos], file)
-
-        return videos
+        
+        with open(cache_filename, 'r') as file:
+            return json.load(file)
 
     except Exception as e:
         print(f"Failed to retrieve a list of videos: {e}")
@@ -110,10 +111,10 @@ def filter_transcript(text):
     except Exception as e:
         print(f"Failed to filter transcript: {e}")
 
-if __name__ == "__main__":
-    fetch_video_data()
+# if __name__ == "__main__":
+#     fetch_video_data()
 
-# start_date = '2024,1,1'
-# end_date = '2024,12,31'
-# print(fetch_video_data(start_date, end_date))
+start_date = '2024,1,1'
+end_date = '2024,12,31'
+print(fetch_video_data(start_date, end_date))
 
