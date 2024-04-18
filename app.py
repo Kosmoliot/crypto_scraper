@@ -102,7 +102,7 @@ def ingest_data(start_date, end_date):
         for video in videos:
             cursor.execute(
                 "INSERT INTO Coins (Video_Id, Published_Date, Title, Coins) VALUES (?, ?, ?, ?)",
-                video.video_id, video.video_date, video.video_title, video.video_coins
+                video['video_id'], video['video_date'], video['video_title'], video['video_coins']
             )
 
         # Commit the transaction
