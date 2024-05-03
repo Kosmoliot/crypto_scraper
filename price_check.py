@@ -7,7 +7,7 @@ if not COINGECKO_API:
     raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
 
 ROOT_URL = "https://api.coingecko.com/api/v3"
-TOKEN = 'energy-web'
+TOKEN = 'energy-web-token'
 
 def ping_coingecko_api():
     # Construct the URL for the ping endpoint with the API key as a query parameter
