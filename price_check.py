@@ -6,26 +6,22 @@ COINGECKO_API = os.getenv('COINGECKO_API')
 if not COINGECKO_API:
     raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
 
+ROOT_URL = "https://api.coingecko.com/api/v3"
+TOKEN = 'energy-web'
 
 def ping_coingecko_api():
-    # CoinGecko API endpoint for ping
-    url = "https://pro-api.coingecko.com/api/v3/ping"
-
-    # Replace 'YOUR_API_KEY' with your actual API key
-    headers = {
-        'Content-Type': 'application/json',
-        'x-cg-pro-api-key': COINGECKO_API
-    }
-
+    # Construct the URL for the ping endpoint with the API key as a query parameter
+    url = f"{ROOT_URL}/simple/price?ids={TOKEN}&vs_currencies=usd&x_cg_demo_api_key{COINGECKO_API}"
+    
     try:
         # Send GET request to CoinGecko API
-        response = requests.get(url, headers=headers)
-
+        response = requests.get(url)
+        
         # Check if request was successful
         if response.status_code == 200:
-            print("CoinGecko API is accessible.")
+            print(response.text)
         else:
-            print(f"Failed to ping CoinGecko API: {response.status_code}")
+            print(f"Failed to ping CoinGecko API: {response.status_code}: {response.text}")
     except Exception as e:
         print(f"Error: {e}")
 
