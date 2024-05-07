@@ -39,7 +39,7 @@ def get_token_price_on_date(date):
             # Parse JSON response
             data = response.json()
             if data:
-                token_price = data[0]['market_data']['current_price']['usd']
+                token_price = data['market_data']['current_price']['usd']
                 print(f"Token price on {date}: ${token_price}")
             else:
                 print(f"No data available for {date}")
