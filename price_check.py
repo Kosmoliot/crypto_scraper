@@ -8,7 +8,7 @@ if not COINGECKO_API:
     raise ValueError("COINGECKO_API environment variable is not set.")
 
 ROOT_URL = "https://api.coingecko.com/api/v3"
-TOKEN = 'bitcoin'
+TOKEN = 'energy-web-token'
 
 def get_token_price():
     # Construct the URL for fetching token price with the API key as a query parameter
@@ -50,7 +50,7 @@ def get_token_price_on_date(date):
         print(f"Response content: {response.text}")  # Print response content for debugging
 
 # Example usage
-date = '01-01-2024'
+date = '07-05-2024'
 get_token_price_on_date(date)
 
 
