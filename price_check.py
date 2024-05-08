@@ -52,6 +52,3 @@ def get_token_price_on_date(date, token):
 date = '08-05-2024'
 token = 'energy-web-token'
 get_token_price_on_date(date, token)
-
-
-# get_token_price()
