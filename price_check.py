@@ -8,11 +8,10 @@ if not COINGECKO_API:
     raise ValueError("COINGECKO_API environment variable is not set.")
 
 ROOT_URL = "https://api.coingecko.com/api/v3"
-TOKEN = 'energy-web-token'
 
-def get_token_price():
+def get_token_price(token):
     # Construct the URL for fetching token price with the API key as a query parameter
-    url = f"{ROOT_URL}/simple/price?ids={TOKEN}&vs_currencies=usd&x_cg_demo_api_key={COINGECKO_API}"
+    url = f"{ROOT_URL}/simple/price?ids={token}&vs_currencies=usd&x_cg_demo_api_key={COINGECKO_API}"
     
     try:
         # Send GET request to CoinGecko API
@@ -26,9 +25,9 @@ def get_token_price():
     except Exception as e:
         print(f"Error: {e}")
 
-def get_token_price_on_date(date):
+def get_token_price_on_date(date, token):
     # Construct the URL for the historical token price endpoint with the required parameters and API key
-    url = f"{ROOT_URL}/coins/{TOKEN}/history?date={date}&x_cg_demo_api_key={COINGECKO_API}"
+    url = f"{ROOT_URL}/coins/{token}/history?date={date}&x_cg_demo_api_key={COINGECKO_API}"
     
     try:
         # Send GET request to CoinGecko API
@@ -50,8 +49,9 @@ def get_token_price_on_date(date):
         print(f"Response content: {response.text}")  # Print response content for debugging
 
 # Example usage
-date = '07-05-2024'
-get_token_price_on_date(date)
+date = '08-05-2024'
+token = 'energy-web-token'
+get_token_price_on_date(date, token)
 
 
 # get_token_price()
