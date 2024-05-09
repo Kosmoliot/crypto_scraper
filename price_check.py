@@ -49,6 +49,7 @@ def get_token_price_on_date(date, token):
         print(f"Response content: {response.text}")  # Print response content for debugging
 
 # Example usage
-date = '08-05-2024'
-token = 'energy-web-token'
-get_token_price_on_date(date, token)
+if __name__ == "__main__":
+    date = '09-05-2024'
+    token = 'energy-web-token'
+    get_token_price_on_date(date, token)
