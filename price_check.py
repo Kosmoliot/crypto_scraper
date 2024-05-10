@@ -51,7 +51,7 @@ def get_token_price_on_date(date, token):
 
 def get_historical_chart(token, currency, period, interval):
     # Construct the URL for the historical chart price endpoint with the required parameters and API key
-    url = f"{ROOT_URL}coins/{token}/market_chart?vs_currency={currency}&days={period}&interval={interval}&x_cg_demo_api_key={COINGECKO_API}"
+    url = f"{ROOT_URL}/coins/{token}/market_chart?vs_currency={currency}&days={period}&interval={interval}"
 
     headers = {"accept": "application/json"}
 
@@ -61,13 +61,13 @@ def get_historical_chart(token, currency, period, interval):
 
 # Example usage
 if __name__ == "__main__":
-    date = '09-05-2024'
+    date = '10-05-2024'
     token = 'energy-web-token'
     get_token_price_on_date(date, token)
 
 
-token = "bitcoin"
+token = "energy-web-token"
 currency = "usd"
-period = 5
+period = 15
 interval = "daily"
 get_historical_chart(token, currency="usd", period=5, interval="daily")
