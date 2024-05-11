@@ -55,15 +55,16 @@ def get_historical_chart(token, currency, period, interval):
     url = f"{ROOT_URL}/coins/{token}/market_chart?vs_currency={currency}&days={period}&interval={interval}"
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
-    # for item in response.text["prices"]:
-    #     item[0] = epoch_converter[item[0]]
-    # print(response.text)
-    print(response.json)
+    response_dict = response.json()
+    for r_dict in response_dict:
+        for r_list in response_dict[r_dict]:
+            r_list[0] = epoch_converter(r_list[0])
+    print(response_dict)
 
 def epoch_converter(epoch_time):
     epoch_time = 1715040000000 / 1000  # Convert milliseconds to seconds
     human_readable_date = datetime.datetime.fromtimestamp(epoch_time, datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
-    print("Epoch to Human-readable date:", human_readable_date)
+    return human_readable_date
 
 # Example usage
 # if __name__ == "__main__":
