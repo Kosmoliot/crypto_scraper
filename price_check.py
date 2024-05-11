@@ -1,6 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
+import datetime
 
 load_dotenv()
 COINGECKO_API = os.getenv('COINGECKO_API')
@@ -52,22 +53,28 @@ def get_token_price_on_date(date, token):
 def get_historical_chart(token, currency, period, interval):
     # Construct the URL for the historical chart price endpoint with the required parameters and API key
     url = f"{ROOT_URL}/coins/{token}/market_chart?vs_currency={currency}&days={period}&interval={interval}"
-
     headers = {"accept": "application/json"}
-
     response = requests.get(url, headers=headers)
+    # for item in response.text["prices"]:
+    #     item[0] = epoch_converter[item[0]]
+    # print(response.text)
+    print(response.json)
 
-    print(response.text)
+def epoch_converter(epoch_time):
+    epoch_time = 1715040000000 / 1000  # Convert milliseconds to seconds
+    human_readable_date = datetime.datetime.fromtimestamp(epoch_time, datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
+    print("Epoch to Human-readable date:", human_readable_date)
 
 # Example usage
-if __name__ == "__main__":
-    date = '10-05-2024'
-    token = 'energy-web-token'
-    get_token_price_on_date(date, token)
+# if __name__ == "__main__":
+#     date = '10-05-2024'
+#     token = 'energy-web-token'
+#     get_token_price_on_date(date, token)
 
 
 token = "energy-web-token"
 currency = "usd"
 period = 15
 interval = "daily"
-get_historical_chart(token, currency="usd", period=5, interval="daily")
+get_historical_chart(token, currency, period, interval)
+
