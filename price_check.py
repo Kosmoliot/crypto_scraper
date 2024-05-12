@@ -59,10 +59,10 @@ def get_historical_chart(token, currency, period, interval):
     for r_dict in response_dict:
         for r_list in response_dict[r_dict]:
             r_list[0] = epoch_converter(r_list[0])
-    print(response_dict)
+    return response_dict
 
-def epoch_converter(epoch_time):
-    epoch_time = 1715040000000 / 1000  # Convert milliseconds to seconds
+def epoch_converter(timestamp):
+    epoch_time = timestamp / 1000  # Convert milliseconds to seconds
     human_readable_date = datetime.datetime.fromtimestamp(epoch_time, datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
     return human_readable_date
 
@@ -75,7 +75,7 @@ def epoch_converter(epoch_time):
 
 token = "energy-web-token"
 currency = "usd"
-period = 15
+period = 5
 interval = "daily"
-get_historical_chart(token, currency, period, interval)
+print(get_historical_chart(token, currency, period, interval))
 
