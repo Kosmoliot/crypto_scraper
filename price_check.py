@@ -75,7 +75,7 @@ def epoch_converter(timestamp):
 
 token = "energy-web-token"
 currency = "usd"
-period = 5
+period = 10
 interval = "daily"
 print(get_historical_chart(token, currency, period, interval))
 
