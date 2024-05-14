@@ -66,6 +66,18 @@ def epoch_converter(timestamp):
     human_readable_date = datetime.datetime.fromtimestamp(epoch_time, datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
     return human_readable_date
 
+def date_converter(date):
+    # Convert the date string to a datetime object
+    datetime_obj = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+
+    # Convert the datetime object to a UTC timestamp in seconds
+    timestamp = datetime_obj.timestamp()
+
+    # Convert the timestamp to milliseconds
+    epoch_time = int(timestamp * 1000)
+
+    return epoch_time
+
 # Example usage
 # if __name__ == "__main__":
 #     date = '10-05-2024'
@@ -73,9 +85,11 @@ def epoch_converter(timestamp):
 #     get_token_price_on_date(date, token)
 
 
-token = "energy-web-token"
-currency = "usd"
-period = 10
-interval = "daily"
-print(get_historical_chart(token, currency, period, interval))
+# token = "energy-web-token"
+# currency = "usd"
+# period = 10
+# interval = "daily"
+# print(get_historical_chart(token, currency, period, interval))
+
+print(epoch_converter(date_converter("2024-05-06 00:00:00")))
 
