@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-import datetime
+from datetime import datetime, timezone
 
 load_dotenv()
 COINGECKO_API = os.getenv('COINGECKO_API')
@@ -63,12 +63,12 @@ def get_historical_chart(token, currency, period, interval):
 
 def epoch_converter(timestamp):
     epoch_time = timestamp / 1000  # Convert milliseconds to seconds
-    human_readable_date = datetime.datetime.fromtimestamp(epoch_time, datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
+    human_readable_date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     return human_readable_date
 
 def date_converter(date):
     # Convert the date string to a datetime object
-    datetime_obj = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+    datetime_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
 
     # Convert the datetime object to a UTC timestamp in seconds
     timestamp = datetime_obj.timestamp()
