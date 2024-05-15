@@ -63,20 +63,23 @@ def get_historical_chart(token, currency, period, interval):
 
 def epoch_converter(timestamp):
     epoch_time = timestamp / 1000  # Convert milliseconds to seconds
-    human_readable_date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
-    return human_readable_date
+    date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    return date
 
 def date_converter(date):
     # Convert the date string to a datetime object
     datetime_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
-
-    # Convert the datetime object to a UTC timestamp in seconds
-    timestamp = datetime_obj.timestamp()
-
-    # Convert the timestamp to milliseconds
-    epoch_time = int(timestamp * 1000)
-
+    timestamp = datetime_obj.timestamp()    # Convert the datetime object to a UTC timestamp in seconds
+    epoch_time = int(timestamp * 1000)  # Convert the timestamp to milliseconds
     return epoch_time
+
+def get_time_range_price(token, start_date, end_date, currency="usd"):
+    start_epoch = date_converter(start_date)
+    end_epoch = date_converter(end_date)
+    url = f"{ROOT_URL}/coins/{token}/market_chart/range?vs_currency={currency}&from={start_epoch}&to={end_epoch}&x_cg_demo_api_key={COINGECKO_API}"
+    headers = {"accept": "application/json"}
+    response = requests.get(url, headers=headers)
+    return response.text
 
 # Example usage
 # if __name__ == "__main__":
@@ -91,5 +94,5 @@ def date_converter(date):
 # interval = "daily"
 # print(get_historical_chart(token, currency, period, interval))
 
-print(epoch_converter(date_converter("2024-05-06 00:00:00")))
+print(get_time_range_price("energy-web-token", "2024-05-01 00:00:00", "2024-05-07 00:00:00"))
 
