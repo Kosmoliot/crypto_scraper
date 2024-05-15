@@ -69,17 +69,20 @@ def epoch_converter(timestamp):
 def date_converter(date):
     # Convert the date string to a datetime object
     datetime_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
-    timestamp = datetime_obj.timestamp()    # Convert the datetime object to a UTC timestamp in seconds
-    epoch_time = int(timestamp * 1000)  # Convert the timestamp to milliseconds
+    epoch_time = datetime_obj.timestamp()    # Convert the datetime object to a UTC timestamp in seconds
     return epoch_time
 
 def get_time_range_price(token, start_date, end_date, currency="usd"):
     start_epoch = date_converter(start_date)
     end_epoch = date_converter(end_date)
-    url = f"{ROOT_URL}/coins/{token}/market_chart/range?vs_currency={currency}&from={start_epoch}&to={end_epoch}&x_cg_demo_api_key={COINGECKO_API}"
+    url = f"{ROOT_URL}/coins/{token}/market_chart/range?vs_currency={currency}&from={start_epoch}&to={end_epoch}"
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
-    return response.text
+    response_dict = response.json()
+    for r_dict in response_dict:
+        for r_list in response_dict[r_dict]:
+            r_list[0] = epoch_converter(r_list[0])
+    return response_dict
 
 # Example usage
 # if __name__ == "__main__":
