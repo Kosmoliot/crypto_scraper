@@ -82,7 +82,7 @@ def get_time_range_price(token, start_date, end_date, currency="usd"):
     for r_dict in response_dict:
         for r_list in response_dict[r_dict]:
             r_list[0] = epoch_converter(r_list[0])
-    return response_dict
+    return response_dict['prices']
 
 # Example usage
 # if __name__ == "__main__":
