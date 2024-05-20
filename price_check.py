@@ -91,11 +91,11 @@ def get_time_range_price(token, start_date, end_date, currency="usd"):
 #     get_token_price_on_date(date, token)
 
 
-# token = "energy-web-token"
-# currency = "usd"
-# period = 10
-# interval = "daily"
-# print(get_historical_chart(token, currency, period, interval))
+token = "energy-web-token"
+currency = "usd"
+period = 10
+interval = "daily"
+print(get_historical_chart(token, currency, period, interval))
 
 print(get_time_range_price("energy-web-token", "2024-05-01 00:00:00", "2024-05-07 00:00:00"))
 
