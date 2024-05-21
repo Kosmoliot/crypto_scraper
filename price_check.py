@@ -53,13 +53,27 @@ def get_token_price_on_date(date, token):
 def get_historical_chart(token, currency, period, interval):
     # Construct the URL for the historical chart price endpoint with the required parameters and API key
     url = f"{ROOT_URL}/coins/{token}/market_chart?vs_currency={currency}&days={period}&interval={interval}"
-    headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers)
-    response_dict = response.json()
-    for r_dict in response_dict:
-        for r_list in response_dict[r_dict]:
-            r_list[0] = epoch_converter(r_list[0])
-    return response_dict
+
+    try:
+        # Send GET request to CoinGecko API
+        headers = {"accept": "application/json"}
+        response = requests.get(url, headers=headers)
+        response_dict = response.json()
+
+        if response.status_code == 200: 
+
+            if response_dict:
+                for r_dict in response_dict:
+                    for r_list in response_dict[r_dict]:
+                        r_list[0] = epoch_converter(r_list[0])
+                return response_dict
+            else:
+                print("No data available for the specified period.")
+        else:
+            print("Failed to get data from Coingecko.")
+    except Exception as e:
+        print(f"Error: {e}")
+        print(f"Response content: {response.text}") # Print the content for debugging
 
 def epoch_converter(timestamp):
     epoch_time = timestamp / 1000  # Convert milliseconds to seconds
@@ -91,11 +105,11 @@ def get_time_range_price(token, start_date, end_date, currency="usd"):
 #     get_token_price_on_date(date, token)
 
 
-# token = "energy-web-token"
-# currency = "usd"
-# period = 10
-# interval = "daily"
-# print(get_historical_chart(token, currency, period, interval))
+token = "energy-web-token"
+currency = "usd"
+period = 1
+interval = "daily"
+print(get_historical_chart(token, currency, period, interval))
 
-print(get_time_range_price("energy-web-token", "2024-05-01 00:00:00", "2024-05-07 00:00:00"))
+# print(get_time_range_price("energy-web-token", "2024-05-01 00:00:00", "2024-05-07 00:00:00"))
 
