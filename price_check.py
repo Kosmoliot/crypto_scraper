@@ -10,10 +10,20 @@ if not COINGECKO_API:
 
 ROOT_URL = "https://api.coingecko.com/api/v3"
 
+def epoch_converter(timestamp):
+    epoch_time = timestamp / 1000  # Convert milliseconds to seconds
+    date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    return date
+
+def date_converter(date):
+    # Convert the date string to a datetime object
+    datetime_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
+    epoch_time = int(datetime_obj.timestamp())    # Convert the datetime object to a UTC timestamp in seconds
+    return epoch_time
+
 def get_token_price(token):
     # Construct the URL for fetching token price with the API key as a query parameter
     url = f"{ROOT_URL}/simple/price?ids={token}&vs_currencies=usd&x_cg_demo_api_key={COINGECKO_API}"
-    
     try:
         # Send GET request to CoinGecko API
         response = requests.get(url)
@@ -74,17 +84,6 @@ def get_historical_chart(token, currency, period, interval):
     except Exception as e:
         print(f"Error: {e}")
         print(f"Response content: {response.text}") # Print the content for debugging
-
-def epoch_converter(timestamp):
-    epoch_time = timestamp / 1000  # Convert milliseconds to seconds
-    date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
-    return date
-
-def date_converter(date):
-    # Convert the date string to a datetime object
-    datetime_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
-    epoch_time = datetime_obj.timestamp()    # Convert the datetime object to a UTC timestamp in seconds
-    return epoch_time
 
 def get_time_range_price(token, start_date, end_date, currency="usd"):
     start_epoch = date_converter(start_date)
