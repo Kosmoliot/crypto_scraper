@@ -10,107 +10,83 @@ if not COINGECKO_API:
 
 ROOT_URL = "https://api.coingecko.com/api/v3"
 
+
+# Function to convert epoch time to human-readable date
 def epoch_converter(timestamp):
     epoch_time = timestamp / 1000  # Convert milliseconds to seconds
     date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     return date
 
+
+# Function to convert date to epoch time
 def date_converter(date):
     # Convert the date string to a datetime object
     datetime_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
     epoch_time = int(datetime_obj.timestamp())    # Convert the datetime object to a UTC timestamp in seconds
     return epoch_time
 
+
+# Function to get current token price
 def get_token_price(token):
     # Construct the URL for fetching token price with the API key as a query parameter
     url = f"{ROOT_URL}/simple/price?ids={token}&vs_currencies=usd&x_cg_demo_api_key={COINGECKO_API}"
     try:
-        # Send GET request to CoinGecko API
         response = requests.get(url)
-        
-        # Check if request was successful
-        if response.status_code == 200:
-            print(response.text)
-        else:
-            print(f"Failed to fetch token price: {response.status_code}: {response.text}")
-    except Exception as e:
-        print(f"Error: {e}")
+        response.raise_for_status()
+        return(response.json())
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching token price: {e}")
 
+
+# Function to get token price on a specific date
 def get_token_price_on_date(date, token):
     # Construct the URL for the historical token price endpoint with the required parameters and API key
     url = f"{ROOT_URL}/coins/{token}/history?date={date}&x_cg_demo_api_key={COINGECKO_API}"
-    
     try:
-        # Send GET request to CoinGecko API
         response = requests.get(url)
-        
-        # Check if request was successful
-        if response.status_code == 200:
-            # Parse JSON response
-            data = response.json()
-            if data:
-                token_price = data['market_data']['current_price']['usd']
-                print(f"Token price on {date}: ${token_price}")
-            else:
-                print(f"No data available for {date}")
-        else:
-            print(f"Failed to get token price for {date}: {response.text}")
-    except Exception as e:
-        print(f"Error: {e}")
-        print(f"Response content: {response.text}")  # Print response content for debugging
+        response.raise_for_status()
+        data = response.json()
+        token_price = data['market_data']['current_price']['usd']
+        print(f"Token price on {date}: ${token_price}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching token price for {date}: {e}")
+    except KeyError:
+        print(f"No data available for {date}")
 
 
+# Function to get historical chart data
 def get_historical_chart(token, currency, period, interval):
-    # Construct the URL for the historical chart price endpoint with the required parameters and API key
     url = f"{ROOT_URL}/coins/{token}/market_chart?vs_currency={currency}&days={period}&interval={interval}"
-
     try:
-        # Send GET request to CoinGecko API
         headers = {"accept": "application/json"}
         response = requests.get(url, headers=headers)
+        response.raise_for_status()
         response_dict = response.json()
+        for key in response_dict:
+            for r_list in response_dict[key]:
+                r_list[0] = epoch_converter(r_list[0])
+        return response_dict
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching historical chart data: {e}")
+        return None
+    
 
-        if response.status_code == 200: 
-
-            if response_dict:
-                for r_dict in response_dict:
-                    for r_list in response_dict[r_dict]:
-                        r_list[0] = epoch_converter(r_list[0])
-                return response_dict
-            else:
-                print("No data available for the specified period.")
-        else:
-            print("Failed to get data from Coingecko.")
-    except Exception as e:
-        print(f"Error: {e}")
-        print(f"Response content: {response.text}") # Print the content for debugging
-
+ #Function to get token prices within a time range
 def get_time_range_price(token, start_date, end_date, currency="usd"):
     start_epoch = date_converter(start_date)
     end_epoch = date_converter(end_date)
     url = f"{ROOT_URL}/coins/{token}/market_chart/range?vs_currency={currency}&from={start_epoch}&to={end_epoch}"
-
     try:
         headers = {"accept": "application/json"}
         response = requests.get(url, headers=headers)
+        response.raise_for_status()
         response_dict = response.json()
-        if response.status_code == 200:
-            if response_dict:
-                for r_dict in response_dict:
-                    for r_list in response_dict[r_dict]:
-                        r_list[0] = epoch_converter(r_list[0])
-                return response_dict['prices']
-            else:
-                print("No data available for the specified period")
-                return None
-        else:
-            print(f"Failed to get data from Coingecko. Status code: {response.status_code}")
-            print(f"Response content: {response.text}")
-            return None
-    except Exception as e:
-        print(f"Error: {e}")
-        if response is not None:
-            print(f"Response error: {response.text}")
+        for key in response_dict:
+            for r_list in response_dict[key]:
+                r_list[0] = epoch_converter(r_list[0])
+        return response_dict.get('prices', [])
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching time range price data: {e}")
         return None
 
 # Example usage
