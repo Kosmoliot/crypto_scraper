@@ -22,6 +22,8 @@ connection_string = os.environ["AZURE_SQL_CONNECTIONSTRING"]
 
 app = FastAPI()
 
+if not connection_string:
+    raise ValueError("AZURE_SQL_CONNECTIONSTRING environment variable is not set.")
 
 # Print all the videos and their data
 @app.get("/coins")
