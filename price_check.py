@@ -11,11 +11,15 @@ if not COINGECKO_API:
 ROOT_URL = "https://api.coingecko.com/api/v3"
 
 
-# Function to convert epoch time to human-readable date
 def epoch_converter(timestamp):
-    epoch_time = timestamp / 1000  # Convert milliseconds to seconds
-    date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
-    return date
+    """Convert epoch time in milliseconds to human-readable date."""
+    try:
+        epoch_time = timestamp / 1000  # Convert milliseconds to seconds
+        date = datetime.fromtimestamp(epoch_time, timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+        return date
+    except Exception as e:
+        print(f"Error converting epoch time: {e}")
+        return None
 
 
 # Function to convert date to epoch time
