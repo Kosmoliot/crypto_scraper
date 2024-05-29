@@ -33,16 +33,16 @@ def date_converter(date_str):
         return None
 
 
-# Function to get current token price
 def get_token_price(token):
-    # Construct the URL for fetching token price with the API key as a query parameter
+    """Get current token price."""
     url = f"{ROOT_URL}/simple/price?ids={token}&vs_currencies=usd&x_cg_demo_api_key={COINGECKO_API}"
     try:
         response = requests.get(url)
         response.raise_for_status()
-        return(response.json())
+        return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching token price: {e}")
+        return None
 
 
 # Function to get token price on a specific date
