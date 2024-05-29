@@ -22,12 +22,15 @@ def epoch_converter(timestamp):
         return None
 
 
-# Function to convert date to epoch time
-def date_converter(date):
-    # Convert the date string to a datetime object
-    datetime_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
-    epoch_time = int(datetime_obj.timestamp())    # Convert the datetime object to a UTC timestamp in seconds
-    return epoch_time
+def date_converter(date_str):
+    """Convert human-readable date to epoch time in seconds."""
+    try:
+        datetime_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
+        epoch_time = int(datetime_obj.timestamp())  # Convert datetime object to UTC timestamp in seconds
+        return epoch_time
+    except ValueError as e:
+        print(f"Error converting date to epoch time: {e}")
+        return None
 
 
 # Function to get current token price
