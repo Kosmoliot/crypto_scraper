@@ -80,8 +80,8 @@ def get_historical_chart(token, currency, period, interval):
         return None
 
 
- #Function to get token prices within a time range
 def get_time_range_price(token, start_date, end_date, currency="usd"):
+    """Get token prices within a time range."""
     start_epoch = date_converter(start_date)
     end_epoch = date_converter(end_date)
     url = f"{ROOT_URL}/coins/{token}/market_chart/range?vs_currency={currency}&from={start_epoch}&to={end_epoch}"
