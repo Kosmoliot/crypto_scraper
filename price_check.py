@@ -63,8 +63,8 @@ def get_token_price_on_date(date, token):
     return None
 
 
-# Function to get historical chart data
 def get_historical_chart(token, currency, period, interval):
+    """Get historical chart data for a token."""
     url = f"{ROOT_URL}/coins/{token}/market_chart?vs_currency={currency}&days={period}&interval={interval}"
     try:
         headers = {"accept": "application/json"}
@@ -78,7 +78,7 @@ def get_historical_chart(token, currency, period, interval):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching historical chart data: {e}")
         return None
-    
+
 
  #Function to get token prices within a time range
 def get_time_range_price(token, start_date, end_date, currency="usd"):
