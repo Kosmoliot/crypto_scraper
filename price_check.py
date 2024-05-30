@@ -45,20 +45,22 @@ def get_token_price(token):
         return None
 
 
-# Function to get token price on a specific date
 def get_token_price_on_date(date, token):
-    # Construct the URL for the historical token price endpoint with the required parameters and API key
-    url = f"{ROOT_URL}/coins/{token}/history?date={date}&x_cg_demo_api_key={COINGECKO_API}"
+    """Get token price on a specific date."""
+    formatted_date = datetime.strptime(date, '%Y-%m-%d').strftime('%d-%m-%Y')
+    url = f"{ROOT_URL}/coins/{token}/history?date={formatted_date}&x_cg_demo_api_key={COINGECKO_API}"
     try:
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
         token_price = data['market_data']['current_price']['usd']
         print(f"Token price on {date}: ${token_price}")
+        return token_price
     except requests.exceptions.RequestException as e:
         print(f"Error fetching token price for {date}: {e}")
     except KeyError:
         print(f"No data available for {date}")
+    return None
 
 
 # Function to get historical chart data
