@@ -111,5 +111,13 @@ def get_time_range_price(token, start_date, end_date, currency="usd"):
 # interval = "daily"
 # print(get_historical_chart(token, currency, period, interval))
 
-print(get_time_range_price("energy-web-token", "2024-05-20 00:00:00", "2024-05-21 00:00:00"))
+# Example usage
+if __name__ == "__main__":
+    token = "energy-web-token"
+    start_date = "2024-05-20 00:00:00"
+    end_date = "2024-05-21 00:00:00"
+    prices = get_time_range_price(token, start_date, end_date)
+    if prices:
+        for price in prices:
+            print(f"Price at {price[0]}: {price[1]} USD")
 
