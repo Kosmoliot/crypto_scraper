@@ -105,7 +105,7 @@ def filter_transcript(text):
     except Exception as e:
         print(f"Failed to filter transcript: {e}")
 
-
+# Example usage
 if __name__ == "__main__":
     start_date = '2024,1,1'
     end_date = '2024,12,31'
