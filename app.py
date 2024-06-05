@@ -1,125 +1,115 @@
 import os
 import pyodbc
-from transcript import fetch_video_data
-
-
-# FastAPI web framework for building APIs with Python. Uses Swagger UI to generate 
-# interactive API documentation that lets your users try out the API calls directly 
-# in the browser
-from fastapi import FastAPI
-
-#FastAPI uses Pydantic models for request and response validation. It automatically 
-# validates request data against the defined data models and raises validation errors
-# if data doesn't match the expected schema
-from pydantic import BaseModel
-
-# Uses load_dotenv to load a connection string from .env file
+from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
+from transcript import fetch_video_data
+import logging
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# Load environment variables
 load_dotenv()
-connection_string = os.environ["AZURE_SQL_CONNECTIONSTRING"]
-
-app = FastAPI()
-
+connection_string = os.getenv("AZURE_SQL_CONNECTIONSTRING")
 if not connection_string:
     raise ValueError("AZURE_SQL_CONNECTIONSTRING environment variable is not set.")
 
-# Print all the videos and their data
+app = FastAPI()
+
+# Database connection management
+def get_conn():
+    try:
+        conn = pyodbc.connect(connection_string)
+        return conn
+    except pyodbc.Error as e:
+        logger.error(f"Database connection error: {e}")
+        raise HTTPException(status_code=500, detail="Database connection error")
+
+# API Endpoints
+
 @app.get("/coins")
 def get_coins():
-    rows = []
-    with get_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Coins")
-
-        for row in cursor.fetchall():
-            print(row.Title, row.Published_Date)
-            rows.append(f"{row.Video_Id}, {row.Published_Date}, {row.Title}, {row.Coins}")
-    return rows
-
-# Fetch the video data by table ID
-@app.get("/Coins/{ID}")
-def get_coins_by_id(ID: int):
-    with get_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Coins WHERE ID = ?", ID)
-
-        row = cursor.fetchone()
-        return f"{row.Video_Id}, {row.Published_Date}, {row.Coins}"
-
-@app.get("/Create Table")
-def root():
-    print("Root of Coins API")
     try:
-        conn = get_conn()
-        cursor = conn.cursor()
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM Coins")
+            rows = cursor.fetchall()
+            return [
+                {"video_id": row.Video_Id, "published_date": row.Published_Date, "title": row.Title, "coins": row.Coins}
+                for row in rows
+            ]
+    except pyodbc.Error as e:
+        logger.error(f"Error fetching coins: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching coins")
 
-        # Table should be created ahead of time in production app.
-        cursor.execute("""
-            CREATE TABLE Coins (
-                ID int NOT NULL PRIMARY KEY IDENTITY,
-                Video_Id varchar(255),
-                Published_Date varchar(255),
-                Title varchar(255),
-                Coins NVARCHAR(MAX)
-            );
-        """)
+@app.get("/coins/{id}")
+def get_coins_by_id(id: int):
+    try:
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM Coins WHERE ID = ?", id)
+            row = cursor.fetchone()
+            if row:
+                return {"video_id": row.Video_Id, "published_date": row.Published_Date, "title": row.Title, "coins": row.Coins}
+            else:
+                raise HTTPException(status_code=404, detail="Coin not found")
+    except pyodbc.Error as e:
+        logger.error(f"Error fetching coin by ID: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching coin by ID")
 
-        conn.commit()
+@app.post("/create_table")
+def create_table():
+    try:
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE Coins (
+                    ID int NOT NULL PRIMARY KEY IDENTITY,
+                    Video_Id varchar(255),
+                    Published_Date varchar(255),
+                    Title varchar(255),
+                    Coins NVARCHAR(MAX)
+                );
+            """)
+            conn.commit()
+        return {"message": "Coins table created in the database"}
+    except pyodbc.Error as e:
+        logger.error(f"Error creating table: {e}")
+        raise HTTPException(status_code=500, detail="Error creating table")
     except Exception as e:
-        # Table may already exist
-        print(e)
-    return "Coins table created in the database."
+        logger.error(f"Table may already exist: {e}")
+        raise HTTPException(status_code=400, detail="Table may already exist")
 
-# Delete Coins table from the database
-@app.get("/Delete table")
+@app.post("/delete_table")
 def delete_table():
     try:
-        conn = get_conn()
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            DROP TABLE Coins;
-        """)
-
-        conn.commit()
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DROP TABLE Coins;")
+            conn.commit()
+        return {"message": "Coins table deleted from the database"}
+    except pyodbc.Error as e:
+        logger.error(f"Error deleting table: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting table")
     except Exception as e:
-        # Table doesn't exist
-        print(e)
-    return "Coins Table deleted from the database"
+        logger.error(f"Table may not exist: {e}")
+        raise HTTPException(status_code=400, detail="Table may not exist")
 
-# Ingesting data into Azure database that was generated by "tanscript" module
-@app.post("/Ingest data")
-def ingest_data(start_date, end_date):
-    # Retrieve video IDs and other data
+@app.post("/ingest_data")
+def ingest_data(start_date: str, end_date: str):
     videos = fetch_video_data(start_date, end_date)
-
     try:
-        # Establish connection to Azure SQL Database
-        conn = get_conn()
-        cursor = conn.cursor()
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            for video in videos:
+                cursor.execute(
+                    "INSERT INTO Coins (Video_Id, Published_Date, Title, Coins) VALUES (?, ?, ?, ?)",
+                    video['video_id'], video['video_date'], video['video_title'], video['video_coins']
+                )
+            conn.commit()
+        return {"message": "Data successfully ingested into Azure SQL Database"}
+    except pyodbc.Error as e:
+        logger.error(f"Error ingesting data: {e}")
+        raise HTTPException(status_code=500, detail="Error ingesting data")
 
-        # Loop through the list of class objects and insert data into the database
-        for video in videos:
-            cursor.execute(
-                "INSERT INTO Coins (Video_Id, Published_Date, Title, Coins) VALUES (?, ?, ?, ?)",
-                video['video_id'], video['video_date'], video['video_title'], video['video_coins']
-            )
-
-        # Commit the transaction
-        conn.commit()
-
-        # Close the cursor and connection
-        cursor.close()
-        conn.close()
-
-        return {"message": "Data successfully ingested into Azure SQL Database."}
-
-    except Exception as e:
-        return {"error": f"An error occurred: {str(e)}"}
-
-
-def get_conn():
-    conn = pyodbc.connect(connection_string)
-    return conn
