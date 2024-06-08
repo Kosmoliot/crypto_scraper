@@ -104,7 +104,7 @@ def get_time_range_price(token: str, start_date: str, end_date: str, currency: s
 
 # Example usage
 if __name__ == "__main__":
-    token = "energy-web-token"
+    token = "bitcoin"
     start_date = "2024-05-25 00:00:00"
     end_date = "2024-05-31 00:00:00"
     prices = get_time_range_price(token, start_date, end_date)
