@@ -120,8 +120,5 @@ if __name__ == "__main__":
 #     get_token_price_on_date(date, token)
 
 
-# token = "energy-web-token"
-# currency = "usd"
-# period = 1
-# interval = "daily"
-# print(get_historical_chart(token, currency, period, interval))
+
+# Minor comment 
