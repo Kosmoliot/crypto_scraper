@@ -112,13 +112,3 @@ if __name__ == "__main__":
         for price in prices:
             logger.info(f"Price at {price[0]}: {price[1]} USD")
 
-
-# Example usage
-# if __name__ == "__main__":
-#     date = '10-05-2024'
-#     token = 'energy-web-token'
-#     get_token_price_on_date(date, token)
-
-
-
-# Minor comment 
