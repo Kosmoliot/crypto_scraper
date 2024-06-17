@@ -66,7 +66,13 @@ def fetch_video_data(start_date, end_date):
             )
             response = request.execute()
 
-
+            for item in response.get("items", []):
+                if item["id"]["kind"] == "youtube#video":
+                    video_id = item["id"]["videoId"]
+                    published_date = item["snippet"]["publishedAt"]
+                    video_title = item["snippet"]["title"]
+                    video_coins = filter_transcript(get_transcript(video_id))
+                    videos.append(ChicoVideo(video_id, published_date, video_title, video_coins))
 
         with open(cache_filename, 'w') as file:
             json.dump([vars(video) for video in videos], file)
