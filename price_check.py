@@ -112,6 +112,7 @@ if __name__ == "__main__":
         for price in prices:
             logger.info(f"Price at {price[0]}: {price[1]} USD")
 
+
 # Example usage
 if __name__ == "__main__":
     token = "bitcoin"
@@ -121,4 +122,3 @@ if __name__ == "__main__":
     if prices:
         for price in prices:
             logger.info(f"Price at {price[0]}: {price[1]} USD")
-
