@@ -212,3 +212,13 @@ if __name__ == "__main__":
     if prices:
         for price in prices:
             logger.info(f"Price at {price[0]}: {price[1]} USD")
+
+            # Example usage
+if __name__ == "__main__":
+    token = "bitcoin"
+    start_date = "2024-05-25 00:00:00"
+    end_date = "2024-05-31 00:00:00"
+    prices = get_time_range_price(token, start_date, end_date)
+    if prices:
+        for price in prices:
+            logger.info(f"Price at {price[0]}: {price[1]} USD")
