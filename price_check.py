@@ -121,5 +121,3 @@ if __name__ == "__main__":
     if prices:
         for price in prices:
             logger.info(f"Price at {price[0]}: {price[1]} USD")
-
-
