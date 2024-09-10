@@ -110,9 +110,3 @@ if __name__ == "__main__":
     start_date = '2024,1,1'
     end_date = '2024,12,31'
     print(fetch_video_data(start_date, end_date))
-
-# Example usage
-if __name__ == "__main__":
-    start_date = '2024,1,1'
-    end_date = '2024,12,31'
-    print(fetch_video_data(start_date, end_date))
