@@ -102,5 +102,5 @@ def get_time_range_price(token: str, start_date: str, end_date: str, currency: s
         logger.error(f"Error fetching time range price data: {e}")
         return None
 
-print(get_token_price("energy-web-token"))
+print(get_token_price_on_date("2024-09-09", "energy-web-token"))
 
