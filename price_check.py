@@ -103,5 +103,3 @@ def get_time_range_price(token: str, start_date: str, end_date: str, currency: s
         return None
 
 print(get_token_price_on_date("2024-09-09", "energy-web-token"))
-
-print(get_token_price_on_date("2024-09-09", "energy-web-token"))
