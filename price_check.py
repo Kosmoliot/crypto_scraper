@@ -106,3 +106,4 @@ print(get_token_price_on_date("2024-09-09", "energy-web-token"))
 
 print(get_token_price_on_date("2024-09-09", "energy-web-token"))
 print(get_token_price_on_date("2024-09-09", "energy-web-token"))
+print(get_token_price_on_date("2024-09-09", "energy-web-token"))
