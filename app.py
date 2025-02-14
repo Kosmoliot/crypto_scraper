@@ -95,23 +95,6 @@ def delete_table():
     except Exception as e:
         logger.error(f"Table may not exist: {e}")
         raise HTTPException(status_code=400, detail="Table may not exist")
-
-@app.post("/ingest_data")
-def ingest_data(start_date: str, end_date: str):
-    videos = fetch_video_data(start_date, end_date)
-    try:
-        with get_conn() as conn:
-            cursor = conn.cursor()
-            for video in videos:
-                cursor.execute(
-                    "INSERT INTO Coins (Video_Id, Published_Date, Title, Coins) VALUES (?, ?, ?, ?)",
-                    video['video_id'], video['video_date'], video['video_title'], video['video_coins']
-                )
-            conn.commit()
-        return {"message": "Data successfully ingested into Azure SQL Database"}
-    except pyodbc.Error as e:
-        logger.error(f"Error ingesting data: {e}")
-        raise HTTPException(status_code=500, detail="Error ingesting data")
     
 
 
