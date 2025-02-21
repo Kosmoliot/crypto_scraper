@@ -96,19 +96,3 @@ def delete_table():
         logger.error(f"Table may not exist: {e}")
         raise HTTPException(status_code=400, detail="Table may not exist")
     
-
-
-@app.post("/delete_table")
-def delete_table():
-    try:
-        with get_conn() as conn:
-            cursor = conn.cursor()
-            cursor.execute("DROP TABLE Coins;")
-            conn.commit()
-        return {"message": "Coins table deleted from the database"}
-    except pyodbc.Error as e:
-        logger.error(f"Error deleting table: {e}")
-        raise HTTPException(status_code=500, detail="Error deleting table")
-    except Exception as e:
-        logger.error(f"Table may not exist: {e}")
-        raise HTTPException(status_code=400, detail="Table may not exist")
